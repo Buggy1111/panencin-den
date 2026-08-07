@@ -1,0 +1,548 @@
+  :root {
+    --cream: #fff6ec;
+    --cream-deep: #ffeeda;
+    --ink: #4a3350;
+    --ink-soft: #8a7690;
+    --coral: #ff7f66;
+    --coral-deep: #e8593f;
+    --gold: #f5b942;
+    --sky: #9fd3e8;
+    --sky-deep: #5ca9c7;
+    --sand: #f2dfb8;
+    --night: #352a4d;
+    --night-deep: #221935;
+    --moon: #fff3d6;
+    --white: #ffffff;
+    --frame: var(--coral);
+    --chrome-bg: var(--cream);
+    --chrome-card: #ffffff;
+    --chrome-text: var(--ink);
+    --chrome-sub: var(--ink-soft);
+    --shadow: 0 12px 28px -10px rgba(74, 51, 80, 0.35);
+  }
+
+  :root[data-theme="dark"] {
+    --chrome-bg: #241a33;
+    --chrome-card: #2f2245;
+    --chrome-text: #fbe9ff;
+    --chrome-sub: #b9a4cc;
+    --shadow: 0 12px 28px -10px rgba(0, 0, 0, 0.55);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --chrome-bg: #241a33;
+      --chrome-card: #2f2245;
+      --chrome-text: #fbe9ff;
+      --chrome-sub: #b9a4cc;
+      --shadow: 0 12px 28px -10px rgba(0, 0, 0, 0.55);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+
+  body {
+    min-height: 100vh;
+    background: var(--chrome-bg);
+    color: var(--chrome-text);
+    font-family: ui-rounded, "SF Pro Rounded", -apple-system, "Segoe UI", system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 14px;
+    padding: 14px 12px 24px;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+  }
+
+  h1 {
+    font-size: clamp(1.3rem, 5vw, 1.7rem);
+    margin: 4px 0 0;
+    letter-spacing: 0.01em;
+    text-wrap: balance;
+    color: var(--chrome-text);
+  }
+  h1 .heart { color: var(--coral); }
+
+  .stage-wrap {
+    position: relative;
+    width: min(94vw, 460px);
+    aspect-ratio: 3 / 4;
+    border-radius: 40px;
+    padding: 14px;
+    background: linear-gradient(160deg, var(--coral), var(--gold));
+    box-shadow: 0 22px 44px -16px rgba(74,51,80,0.45), 0 4px 10px -2px rgba(74,51,80,0.25);
+    overflow: hidden;
+  }
+  .stage-wrap::before {
+    content: ""; position: absolute; inset: -60%;
+    background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.55) 50%, transparent 60%);
+    animation: frame-shine 6s ease-in-out infinite;
+    pointer-events: none; z-index: 1;
+  }
+  @keyframes frame-shine {
+    0%, 30% { transform: translateX(-60%) rotate(8deg); }
+    60%, 100% { transform: translateX(60%) rotate(8deg); }
+  }
+
+  .stage {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    border-radius: 30px;
+    overflow: hidden;
+    background: var(--cream);
+    border: 6px solid var(--cream);
+    box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.55);
+  }
+
+  .scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+    transition: opacity 0.35s ease;
+  }
+  .scene.active { opacity: 1; pointer-events: auto; z-index: 2; }
+
+  .scene-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .scene-content {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 10px 12px;
+  }
+  /* U scén s postranními panely (vše kromě domovské) sedí obsah nahoře jako
+     titulek/bublina nad panenkou — dole u nohou by se s ní vizuálně bil. */
+  .scene-content.top-caption {
+    position: absolute;
+    top: 50px; left: 0; right: 0; bottom: auto;
+    padding: 0 8px;
+  }
+
+  .doll-spot {
+    position: absolute;
+    left: 50%;
+    bottom: 26%;
+    width: 132px;
+    transform: translateX(-50%);
+    z-index: 2;
+    transition: bottom 0.4s ease, transform 0.4s ease;
+  }
+  /* Ležení na dece / ve vaně — otáčí se celý "spot" (kontejner), ne samotné
+     SVG panenky, protože to má vlastní animaci "bob" na transformu a ta by
+     statickou rotaci každý snímek přepsala. */
+  .doll-spot.lying {
+    transform: translateX(-50%) rotate(-90deg);
+  }
+
+  /* Postranní panel s ovládáním — drží se u okrajů scény, takže panenka
+     uprostřed zůstává vždy celá vidět (na žádné šířce obrazovky ji nic
+     nepřekrývá, na rozdíl od dřívějšího "vše pod panenkou" layoutu). */
+  .side-rail {
+    position: absolute;
+    top: 46px;
+    bottom: 12px;
+    width: 30%;
+    min-width: 84px;
+    max-width: 136px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+    z-index: 4;
+  }
+  .side-rail::-webkit-scrollbar { display: none; }
+  .side-rail.left { left: 8px; }
+  .side-rail.right { right: 8px; }
+  .side-rail .primary-btn,
+  .side-rail .bottle-btn {
+    width: 100%; text-align: center; white-space: normal; line-height: 1.15;
+    padding: 9px 8px; font-size: 0.74rem;
+  }
+  .side-rail .progress-track { width: 100%; }
+  .side-rail .progress-wrap { flex-direction: column; align-items: stretch; gap: 5px; }
+
+  .doll {
+    width: 100%;
+    display: block;
+    animation: bob 3.2s ease-in-out infinite;
+    filter: drop-shadow(0 10px 10px rgba(74, 51, 80, 0.25));
+  }
+  /* Obrys na hlavních siluetách (kůže/vlasy/oblečení) — nezávisle na tom, jak
+     podobná bude barva kroje kůži, panenka vždy zůstane čitelná. Drobné
+     dekorativní puntíky/knoflíky obrys záměrně nemají (byl by moc těžký). */
+  .doll .silhouette { stroke: #4a3350; stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-5px) rotate(0.6deg); }
+  }
+  /* Spánek: přepneme na zavřené oči a zklidníme dýchání — bdělá panenka
+     v posteli s otevřenýma očima vypadala nepatřičně. */
+  .doll.sleeping { animation-duration: 6s; }
+  .eye-closed { display: none; }
+  .doll.sleeping .eye-open { display: none; }
+  .doll.sleeping .eye-closed { display: inline; }
+  .eyelid { transform-origin: center; animation: blink 4.4s ease-in-out infinite; }
+  @keyframes blink {
+    0%, 92%, 100% { transform: scaleY(0); }
+    95% { transform: scaleY(1); }
+  }
+
+  .outfit { display: none; }
+  .outfit.on { display: inline; }
+  .accessory { display: none; }
+  .accessory.on { display: inline; }
+
+  .sparkle-burst { opacity: 0; }
+  .sparkle-burst.go { animation: sparkle 0.7s ease-out; }
+  @keyframes sparkle {
+    0% { opacity: 0; transform: scale(0.4) rotate(0deg); }
+    35% { opacity: 1; }
+    100% { opacity: 0; transform: scale(1.5) rotate(50deg); }
+  }
+
+  /* ---- top eyebrow / label ---- */
+  .eyebrow {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    background: rgba(255, 255, 255, 0.7);
+    padding: 4px 10px;
+    border-radius: 999px;
+    position: absolute;
+    top: 10px;
+    left: 52px;
+    z-index: 3;
+  }
+
+  /* ---- HOME scene ---- */
+  .home-sky {
+    background: linear-gradient(180deg, #ffd9c2 0%, #ffe9cf 55%, var(--sand) 100%);
+  }
+  .home-sun {
+    position: absolute; top: 8%; right: 14%;
+    width: 64px; height: 64px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #fff3cf, var(--gold));
+    box-shadow: 0 0 32px 8px rgba(245, 185, 66, 0.55);
+    animation: sun-pulse 5s ease-in-out infinite;
+  }
+  @keyframes sun-pulse { 0%,100%{ transform: scale(1);} 50%{ transform: scale(1.06);} }
+  .home-cloud {
+    position: absolute; width: 70px; height: 26px; background: #fff;
+    border-radius: 999px; opacity: 0.85;
+    box-shadow: 18px -10px 0 -2px #fff, -16px -4px 0 -4px #fff;
+    animation: drift 22s linear infinite;
+  }
+  .home-cloud.c2 { top: 18%; animation-duration: 30s; transform: scale(0.7); }
+  .home-cloud.c1 { top: 10%; }
+  @keyframes drift { from { transform: translateX(-40px);} to { transform: translateX(340px);} }
+  .home-sparkle {
+    position: absolute; width: 5px; height: 5px; border-radius: 50%;
+    background: #fff; opacity: 0; box-shadow: 0 0 6px 2px rgba(255,255,255,0.8);
+    animation: home-twinkle 3s ease-in-out infinite;
+  }
+  .home-sparkle.s1 { top: 16%; left: 18%; animation-delay: 0s; }
+  .home-sparkle.s2 { top: 30%; left: 62%; animation-delay: 1s; }
+  .home-sparkle.s3 { top: 42%; left: 34%; animation-delay: 2s; }
+  @keyframes home-twinkle { 0%,100% { opacity: 0; transform: scale(0.6); } 50% { opacity: 1; transform: scale(1.3); } }
+
+  .doll-name {
+    font-weight: 800; font-size: 1.02rem; color: var(--ink);
+    background: rgba(255,255,255,0.9); padding: 7px 18px; border-radius: 999px;
+    box-shadow: var(--shadow); margin-bottom: 6px; text-align: center;
+  }
+  .doll-name span { display: block; font-weight: 600; font-size: 0.78rem; opacity: 0.7; margin-top: 1px; }
+
+  .room-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%;
+  }
+  .room-btn {
+    display: flex; flex-direction: row; align-items: center; gap: 10px;
+    border: none; border-radius: 20px; padding: 10px 12px;
+    background: var(--white); color: var(--ink);
+    font-family: inherit; font-weight: 800; font-size: 0.92rem;
+    text-align: left;
+    box-shadow: var(--shadow); cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    opacity: 0; transform: translateY(14px) scale(0.9);
+    animation: room-pop 0.5s cubic-bezier(.2,1.4,.4,1) forwards;
+  }
+  .room-btn:nth-child(1) { animation-delay: 0.05s; }
+  .room-btn:nth-child(2) { animation-delay: 0.13s; }
+  .room-btn:nth-child(3) { animation-delay: 0.21s; }
+  .room-btn:nth-child(4) { animation-delay: 0.29s; }
+  @keyframes room-pop { to { opacity: 1; transform: translateY(0) scale(1); } }
+  .room-btn:active { transform: scale(0.94); }
+  .room-btn .badge {
+    flex: 0 0 auto;
+    width: 42px; height: 42px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.6); box-shadow: inset 0 2px 4px rgba(255,255,255,0.7), 0 2px 6px rgba(74,51,80,0.14);
+  }
+  .room-btn .emo { font-size: 1.32rem; line-height: 1; }
+  .room-btn .label {
+    display: flex; flex-direction: column; gap: 1px; min-width: 0;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .room-btn .sub {
+    display: block;
+    font-weight: 600; font-size: 0.66rem; opacity: 0.7; letter-spacing: 0.01em;
+  }
+  .room-btn.outside { background: linear-gradient(135deg, #bfe8ff, var(--sky)); }
+  .room-btn.beach { background: linear-gradient(135deg, #ffe9b0, var(--sand)); }
+  .room-btn.bath { background: linear-gradient(135deg, #d8f2ff, #b7e6ff); }
+  .room-btn.night { background: linear-gradient(135deg, #cdb8ea, #a892d6); color: #fff; }
+  .room-btn.night .sub { opacity: 0.85; }
+
+  /* ---- generic back button ---- */
+  .back-btn {
+    position: absolute; top: 10px; left: 10px; z-index: 5;
+    width: 34px; height: 34px; border-radius: 50%; border: none;
+    background: rgba(255,255,255,0.9); color: var(--ink); font-size: 1.1rem;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow); cursor: pointer;
+  }
+  .back-btn:active { transform: scale(0.9); }
+
+  .sound-btn {
+    position: absolute; top: 10px; right: 10px; z-index: 6;
+    width: 34px; height: 34px; border-radius: 50%; border: none;
+    background: rgba(255,255,255,0.9); font-size: 1.05rem;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow); cursor: pointer;
+  }
+  .sound-btn:active { transform: scale(0.9); }
+
+  /* ---- OUTSIDE scene ---- */
+  .sky-bg { position: absolute; inset: 0; transition: background 0.6s ease; }
+  .sky-bg.w-sun { background: linear-gradient(180deg, #7cc6ea 0%, var(--sky) 55%, #d9f0e0 100%); }
+  .sky-bg.w-rain { background: linear-gradient(180deg, #5b7c93 0%, #7fa1b4 55%, #b7cdd3 100%); }
+  .sky-bg.w-cold { background: linear-gradient(180deg, #b7d3e8 0%, #dceaf3 55%, #f2f7fa 100%); }
+  .sky-bg.w-cloud { background: linear-gradient(180deg, #9fb3c4 0%, #c3d3de 55%, #e6ede2 100%); }
+  .ground {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 20%;
+    background: linear-gradient(180deg, #a8d98a, #86bf68);
+  }
+  .weather-fx { position: absolute; inset: 0; overflow: hidden; }
+  .ray {
+    position: absolute; top: -10%; right: 6%; width: 90px; height: 90px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #fff5da, var(--gold));
+    box-shadow: 0 0 40px 12px rgba(245,185,66,0.5);
+    animation: sun-rotate 14s linear infinite;
+  }
+  @keyframes sun-rotate { from { filter: hue-rotate(0deg);} to { filter: hue-rotate(8deg);} }
+  .drop {
+    position: absolute; top: -10%; width: 3px; height: 16px; background: #eaf6ff; border-radius: 2px;
+    opacity: 0.85; animation: fall 1s linear infinite;
+  }
+  @keyframes fall { to { transform: translateY(340px); } }
+  .flake {
+    position: absolute; top: -6%; width: 8px; height: 8px; background: #fff; border-radius: 50%;
+    opacity: 0.9; animation: snowfall 6s linear infinite;
+  }
+  @keyframes snowfall { to { transform: translateY(340px) translateX(14px); } }
+  .puff {
+    position: absolute; width: 60px; height: 22px; background: #fff; border-radius: 999px; opacity: 0.9;
+    box-shadow: 16px -8px 0 -2px #fff, -14px -3px 0 -4px #fff; animation: drift 18s linear infinite;
+  }
+
+  .pick-btn {
+    display: flex; align-items: center; gap: 7px; width: 100%;
+    border: none; border-radius: 14px; padding: 7px 9px; background: rgba(255,255,255,0.92);
+    box-shadow: var(--shadow); font-size: 1.05rem; cursor: pointer; position: relative;
+    transition: transform 0.15s ease; text-align: left; flex: 0 0 auto;
+  }
+  .pick-btn:active { transform: scale(0.94); }
+  .pick-btn.picked { outline: 2.5px solid var(--coral); background: #fff; }
+  .pick-btn .tag {
+    display: block; font-size: 0.62rem; font-weight: 700; color: var(--ink-soft); line-height: 1.15;
+  }
+  .pick-btn .star {
+    position: absolute; top: -6px; right: -6px; font-size: 0.85rem;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2));
+  }
+
+  .feedback {
+    min-height: 20px; font-weight: 700; font-size: 0.8rem; color: var(--coral-deep);
+    background: rgba(255,255,255,0.85); padding: 4px 12px; border-radius: 999px;
+    opacity: 0; transform: translateY(6px); transition: all 0.25s ease;
+  }
+  .feedback.show { opacity: 1; transform: translateY(0); }
+
+  /* ---- BEACH scene ---- */
+  .beach-bg { background: linear-gradient(180deg, #8ed3ea 0%, #bfe8ee 40%, var(--sand) 40%, #e9cd8c 100%); }
+  .sea {
+    position: absolute; left: 0; right: 0; top: 22%; height: 20%; overflow: hidden;
+  }
+  .wave {
+    position: absolute; left: -10%; width: 120%; height: 100%;
+    background: repeating-linear-gradient(100deg, rgba(255,255,255,0.5) 0 8px, transparent 8px 26px);
+    animation: wave-move 3.4s linear infinite;
+  }
+  @keyframes wave-move { from { transform: translateX(0);} to { transform: translateX(40px);} }
+  .umbrella { position: absolute; top: 30%; left: 16%; width: 70px; }
+  .towel-mat {
+    position: absolute; bottom: 16%; left: 50%; transform: translateX(-50%);
+    width: 130px; height: 46px; border-radius: 10px;
+    background: repeating-linear-gradient(90deg, var(--coral) 0 12px, var(--gold) 12px 24px);
+    box-shadow: var(--shadow); opacity: 0.5; transition: opacity 0.3s ease;
+  }
+  .towel-mat.active { opacity: 1; }
+  .bottle-btn {
+    border: none; border-radius: 16px; padding: 8px 14px; background: var(--white);
+    box-shadow: var(--shadow); font-weight: 700; font-size: 0.82rem; color: var(--ink);
+    display: flex; align-items: center; gap: 6px; cursor: pointer;
+  }
+  .bottle-btn:active { transform: scale(0.95); }
+  .shine-ring {
+    position: absolute; left: 50%; top: 44%; width: 90px; height: 90px; transform: translate(-50%, -50%);
+    border-radius: 50%; pointer-events: none;
+    background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 70%);
+    opacity: 0; transition: opacity 0.2s ease;
+  }
+  .shine-ring.go { animation: shine-pop 0.5s ease-out; }
+  @keyframes shine-pop { 0% { opacity: 0.9; transform: translate(-50%,-50%) scale(0.4);} 100% { opacity: 0; transform: translate(-50%,-50%) scale(1.4);} }
+  .progress-wrap { display: flex; align-items: center; gap: 8px; }
+  .progress-track { width: 90px; height: 8px; border-radius: 999px; background: rgba(255,255,255,0.6); overflow: hidden; }
+  .progress-fill { height: 100%; width: 0%; background: var(--coral); transition: width 0.35s ease; }
+
+  /* ---- BATH scene ---- */
+  .bath-bg { background: linear-gradient(180deg, #d8f2ff 0%, #eefaff 100%); }
+  .tub {
+    position: absolute; bottom: 18%; left: 50%; transform: translateX(-50%);
+    width: 190px; height: 90px; border-radius: 0 0 60px 60px / 0 0 40px 40px;
+    background: #fff; box-shadow: var(--shadow), inset 0 -6px 0 rgba(0,0,0,0.03);
+    border: 4px solid #eaf6ff; overflow: hidden;
+  }
+  .tub-water {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 0%;
+    background: linear-gradient(180deg, #8fd6ea, #5ca9c7);
+    transition: height 1s ease;
+  }
+  .duck {
+    position: absolute; bottom: 4px; left: 20%; font-size: 1.2rem;
+    animation: bobduck 2.2s ease-in-out infinite;
+  }
+  @keyframes bobduck { 0%,100%{ transform: translateY(0) rotate(-4deg);} 50%{ transform: translateY(-4px) rotate(4deg);} }
+  .bubble {
+    position: absolute; bottom: 6px; border-radius: 50%; background: rgba(255,255,255,0.85);
+    box-shadow: inset -2px -2px 0 rgba(255,255,255,0.4), inset 2px 2px 0 rgba(140,200,220,0.3);
+    animation: rise 2.6s ease-in forwards;
+  }
+  @keyframes rise { 0% { transform: translateY(0) scale(0.6); opacity: 0.9;} 90% { opacity: 0.9;} 100% { transform: translateY(-70px) scale(1.1); opacity: 0;} }
+
+  /* ---- BEDTIME scene ---- */
+  .bed-bg { background: linear-gradient(180deg, var(--night) 0%, var(--night-deep) 100%); }
+  .moon {
+    position: absolute; top: 8%; right: 12%; width: 50px; height: 50px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #fffef2, var(--moon));
+    box-shadow: 0 0 26px 6px rgba(255, 243, 214, 0.5);
+  }
+  .star { position: absolute; color: var(--moon); animation: twinkle 2.6s ease-in-out infinite; }
+  @keyframes twinkle { 0%,100%{ opacity: 0.25; transform: scale(0.8);} 50%{ opacity: 1; transform: scale(1.15);} }
+  .bed {
+    position: absolute; bottom: 4%; left: 50%; transform: translateX(-50%);
+    width: 200px; height: 76px; border-radius: 16px 16px 10px 10px;
+    background: linear-gradient(180deg, #6b5590, #55417a);
+    box-shadow: var(--shadow);
+  }
+  .bed::before {
+    content: ""; position: absolute; left: -10px; top: -14px; width: 40px; height: 60px;
+    border-radius: 10px; background: #7a63a0;
+  }
+  .blanket {
+    position: absolute; left: 6px; right: 6px; bottom: 8px; height: 42px; border-radius: 14px;
+    background: linear-gradient(160deg, var(--coral), var(--gold));
+    transform: translateY(120%); transition: transform 0.6s cubic-bezier(.2,1,.3,1);
+  }
+  .blanket.on { transform: translateY(0); }
+  .zzz { position: absolute; font-weight: 800; color: var(--moon); opacity: 0; font-size: 1.1rem; }
+  .zzz.go { animation: zzz-float 2.4s ease-out; }
+  @keyframes zzz-float { 0% { opacity: 0; transform: translate(0,0) scale(0.6);} 30%{ opacity: 1;} 100% { opacity: 0; transform: translate(18px,-50px) scale(1.3);} }
+
+  .clock-card {
+    background: rgba(255,255,255,0.92); border-radius: 20px; padding: 10px 14px;
+    display: flex; align-items: center; gap: 10px; box-shadow: var(--shadow);
+  }
+  .clock-face { font-size: 1.5rem; }
+  .clock-time { font-variant-numeric: tabular-nums; font-weight: 800; font-size: 1.4rem; color: var(--ink); min-width: 64px; text-align: center; }
+  .clock-arrows { display: flex; flex-direction: column; gap: 3px; }
+  .clock-arrows button {
+    border: none; background: var(--coral); color: #fff; width: 26px; height: 22px; border-radius: 8px;
+    font-weight: 800; cursor: pointer; font-size: 0.85rem;
+  }
+  .clock-arrows button:active { transform: scale(0.9); }
+
+  .primary-btn {
+    position: relative; overflow: hidden;
+    border: none; border-radius: 999px; padding: 10px 22px; font-weight: 800; font-size: 0.9rem;
+    background: linear-gradient(135deg, var(--coral), var(--coral-deep)); color: #fff;
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.4); cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+  .primary-btn::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.35), transparent 55%);
+    pointer-events: none;
+  }
+  .primary-btn:active { transform: scale(0.95); }
+  .primary-btn[disabled] { opacity: 0.5; pointer-events: none; }
+
+  /* Sklo/lesk přes horní polovinu tlačítka — vrstvený background, ne ::after
+     (::after + position:relative na CSS Grid položce (.room-btn) rozbíjí
+     zarovnání sloupců mezi řádky v některých prohlížečích). */
+  .pick-btn, .bottle-btn { position: relative; overflow: hidden; }
+  .pick-btn::after, .bottle-btn::after {
+    content: ""; position: absolute; inset: 0; border-radius: inherit;
+    background: linear-gradient(180deg, rgba(255,255,255,0.5), transparent 50%);
+    pointer-events: none;
+  }
+
+  .night-veil {
+    position: absolute; inset: 0; background: #14102080; opacity: 0; pointer-events: none;
+    transition: opacity 1.2s ease; z-index: 4;
+  }
+  .night-veil.on { opacity: 1; pointer-events: auto; }
+  .goodnight-text {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 10px; color: var(--moon); font-weight: 800; font-size: 1.15rem;
+    opacity: 0; transition: opacity 0.8s ease 0.4s; text-align: center; padding: 0 20px;
+  }
+  .goodnight-text.on { opacity: 1; }
+  .replay-btn {
+    border: none; border-radius: 999px; padding: 8px 16px; background: var(--white); color: var(--ink);
+    font-weight: 700; font-size: 0.8rem; box-shadow: var(--shadow); cursor: pointer;
+  }
+
+  footer {
+    color: var(--chrome-sub); font-size: 0.7rem; text-align: center; max-width: 320px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  }

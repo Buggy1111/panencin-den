@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Panenčin den</title>
+<meta name="description" content="Panenčin den — oblékání, pláž, koupel a spaní. Hra pro děti, bez reklam, funguje i offline.">
+<meta name="theme-color" content="#ff7f66">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1><span class="heart">♥</span> Panenčin den <span class="heart">♥</span></h1>
+
+<div class="stage-wrap">
+  <div class="stage" id="stage">
+    <button class="sound-btn" id="soundBtn" aria-label="Zapnout/vypnout zvuk">🔊</button>
+
+    <!-- ============ HOME ============ -->
+    <section class="scene active" data-scene="home">
+      <div class="scene-bg home-sky">
+        <div class="home-sparkle s1"></div>
+        <div class="home-sparkle s2"></div>
+        <div class="home-sparkle s3"></div>
+        <div class="home-sun"></div>
+        <div class="home-cloud c1"></div>
+        <div class="home-cloud c2"></div>
+      </div>
+      <div class="doll-spot" id="dollSpotHome" style="bottom:47%"></div>
+      <div class="scene-content">
+        <div class="doll-name">Ahoj, Andulko! <span>Co budeme dělat?</span></div>
+        <div class="room-grid">
+          <button class="room-btn outside" data-goto="outside">
+            <span class="badge"><span class="emo">🌤️</span></span><span class="label">Ven<span class="sub">Podle počasí</span></span>
+          </button>
+          <button class="room-btn beach" data-goto="beach">
+            <span class="badge"><span class="emo">🏖️</span></span><span class="label">Pláž<span class="sub">Krém a deka</span></span>
+          </button>
+          <button class="room-btn bath" data-goto="bath">
+            <span class="badge"><span class="emo">🛁</span></span><span class="label">Koupel<span class="sub">Bublinky</span></span>
+          </button>
+          <button class="room-btn night" data-goto="bedtime">
+            <span class="badge"><span class="emo">🌙</span></span><span class="label">Spinkat<span class="sub">Pyžamko a budík</span></span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ OUTSIDE ============ -->
+    <section class="scene" data-scene="outside">
+      <button class="back-btn" data-goto="home">←</button>
+      <div class="eyebrow">Ven s kamarádkou</div>
+      <div class="scene-bg sky-bg w-sun" id="outsideSky">
+        <div class="ground"></div>
+        <div class="weather-fx" id="weatherFx"></div>
+      </div>
+      <div class="doll-spot" id="dollSpotOutside"></div>
+      <div class="side-rail left" id="weatherRail">
+        <button class="pick-btn" data-weather="sun">☀️<span class="tag">Sluníčko</span></button>
+        <button class="pick-btn" data-weather="rain">🌧️<span class="tag">Prší</span></button>
+        <button class="pick-btn" data-weather="cold">❄️<span class="tag">Zima</span></button>
+        <button class="pick-btn" data-weather="cloud">⛅<span class="tag">Oblačno</span></button>
+      </div>
+      <div class="side-rail right" id="outsideOutfits">
+        <button class="pick-btn" data-outfit="sundress">👗<span class="tag">Šatičky</span></button>
+        <button class="pick-btn" data-outfit="raincoat">🧥<span class="tag">Pláštěnka</span></button>
+        <button class="pick-btn" data-outfit="coat">🧣<span class="tag">Kabátek</span></button>
+        <button class="pick-btn" data-outfit="cardigan">🦺<span class="tag">Svetřík</span></button>
+        <button class="pick-btn" data-outfit="blue">💙<span class="tag">Modré šaty</span></button>
+        <button class="pick-btn" data-outfit="pink">🎀<span class="tag">Růžové šaty</span></button>
+        <button class="pick-btn" data-outfit="denim">👖<span class="tag">Rifle</span></button>
+        <button class="pick-btn" data-outfit="princess">👑<span class="tag">Princezna</span></button>
+      </div>
+      <div class="scene-content top-caption">
+        <div class="feedback" id="outsideFeedback"></div>
+      </div>
+    </section>
+
+    <!-- ============ BEACH ============ -->
+    <section class="scene" data-scene="beach">
+      <button class="back-btn" data-goto="home">←</button>
+      <div class="eyebrow">Den na pláži</div>
+      <div class="scene-bg beach-bg">
+        <div class="sea"><div class="wave"></div></div>
+        <div class="umbrella">⛱️</div>
+      </div>
+      <div class="towel-mat" id="towelMat"></div>
+      <div class="shine-ring" id="shineRing"></div>
+      <div class="doll-spot" id="dollSpotBeach"></div>
+      <div class="side-rail right">
+        <div class="progress-wrap" id="sunscreenWrap">
+          <button class="bottle-btn" id="sunscreenBtn">🧴 Krém na sluníčko</button>
+          <div class="progress-track"><div class="progress-fill" id="sunscreenFill"></div></div>
+        </div>
+        <button class="primary-btn" id="towelBtn">Položit na deku</button>
+      </div>
+      <div class="scene-content top-caption">
+        <div class="feedback" id="beachFeedback"></div>
+      </div>
+    </section>
+
+    <!-- ============ BATH ============ -->
+    <section class="scene" data-scene="bath">
+      <button class="back-btn" data-goto="home">←</button>
+      <div class="eyebrow">Koupel</div>
+      <div class="scene-bg bath-bg"></div>
+      <div class="tub">
+        <div class="tub-water" id="tubWater"></div>
+        <div class="duck" id="duck">🦆</div>
+        <div id="bubbleField"></div>
+      </div>
+      <div class="doll-spot" id="dollSpotBath" style="bottom:30%; width:100px;"></div>
+      <div class="side-rail right">
+        <button class="primary-btn" id="fillBtn">Napustit vodu 🚿</button>
+        <button class="primary-btn" id="bubbleBtn" disabled>Přidat bublinky 🫧</button>
+        <button class="primary-btn" id="toothBtn" disabled>Vyčistit zoubky 🪥</button>
+        <button class="primary-btn" id="drainBtn" disabled>Utřít a obléct ✨</button>
+      </div>
+      <div class="scene-content top-caption">
+        <div class="feedback" id="bathFeedback"></div>
+      </div>
+    </section>
+
+    <!-- ============ BEDTIME ============ -->
+    <section class="scene" data-scene="bedtime">
+      <button class="back-btn" data-goto="home">←</button>
+      <div class="eyebrow">Dobrou noc</div>
+      <div class="scene-bg bed-bg">
+        <div class="moon"></div>
+      </div>
+      <div class="bed">
+        <div class="blanket" id="blanket"></div>
+      </div>
+      <div class="doll-spot" id="dollSpotBed" style="bottom:22%; width:96px;"></div>
+      <div class="night-veil" id="nightVeil">
+        <div class="goodnight-text" id="goodnightText">
+          <div>Dobrou noc, sladké sny 💤</div>
+          <button class="replay-btn" id="wakeBtn">Vzbudit</button>
+        </div>
+      </div>
+      <div class="side-rail right">
+        <button class="primary-btn" id="pajamaBtn">Obléct pyžamko 🌙</button>
+        <button class="primary-btn" id="tuckBtn" disabled>Uložit do postýlky</button>
+        <button class="primary-btn" id="goodnightBtn" disabled>Dobrou noc</button>
+      </div>
+      <div class="scene-content top-caption">
+        <div class="feedback" id="bedFeedback"></div>
+        <div class="clock-card" id="clockCard" style="display:none">
+          <span class="clock-face">⏰</span>
+          <div class="clock-arrows"><button id="hourUp">▲</button><button id="hourDown">▼</button></div>
+          <span class="clock-time" id="clockTime">7:00</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<footer>Pro Andulku 🎀 — hraje se přímo tady, bez reklam.</footer>
+
+<!-- doll template, cloned into whichever room-spot is active -->
+<template id="dollTemplate">
+  <svg class="doll" viewBox="0 0 200 320" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="skinGrad" cx="38%" cy="32%" r="75%">
+        <stop offset="0%" stop-color="#ffcda8"/>
+        <stop offset="100%" stop-color="#f0b899"/>
+      </radialGradient>
+      <linearGradient id="hairGrad" x1="0%" y1="0%" x2="20%" y2="100%">
+        <stop offset="0%" stop-color="#8a6249"/>
+        <stop offset="100%" stop-color="#5f4130"/>
+      </linearGradient>
+    </defs>
+    <!-- kontaktní stín pod nohama — součást panenky, ne scény, takže funguje
+         automaticky ve všech místnostech bez duplikace -->
+    <ellipse cx="101" cy="298" rx="46" ry="9" fill="#4a3350" opacity="0.16"/>
+    <!-- legs -->
+    <g class="doll-legs">
+      <rect class="silhouette" x="82" y="230" width="16" height="58" rx="8" fill="url(#skinGrad)"/>
+      <rect class="silhouette" x="104" y="230" width="16" height="58" rx="8" fill="url(#skinGrad)"/>
+      <ellipse class="silhouette" cx="90" cy="292" rx="16" ry="9" fill="#e8593f"/>
+      <ellipse class="silhouette" cx="112" cy="292" rx="16" ry="9" fill="#e8593f"/>
+      <path class="silhouette" d="M77 288 Q90 281 103 288" stroke="#c93f28" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path class="silhouette" d="M99 288 Q112 281 125 288" stroke="#c93f28" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <circle cx="90" cy="285" r="2" fill="#ffe0c2"/>
+      <circle cx="112" cy="285" r="2" fill="#ffe0c2"/>
+    </g>
+
+    <!-- outfits: bottoms drawn first so torso overlay can sit above -->
+    <g class="outfit outfit-sundress on" data-outfit="sundress">
+      <path class="silhouette" d="M60 150 L142 150 L156 250 L46 250 Z" fill="#ff7f66"/>
+      <circle cx="80" cy="190" r="4" fill="#fff" opacity="0.8"/>
+      <circle cx="120" cy="205" r="4" fill="#fff" opacity="0.8"/>
+      <circle cx="100" cy="230" r="4" fill="#fff" opacity="0.8"/>
+      <rect class="silhouette" x="60" y="140" width="82" height="26" rx="13" fill="#ff7f66"/>
+    </g>
+    <g class="outfit outfit-swimsuit" data-outfit="swimsuit">
+      <path class="silhouette" d="M66 150 L136 150 L128 220 L74 220 Z" fill="#ff7f66"/>
+      <rect class="silhouette" x="66" y="140" width="70" height="22" rx="11" fill="#e8593f"/>
+    </g>
+    <g class="outfit outfit-raincoat" data-outfit="raincoat">
+      <path class="silhouette" d="M56 148 L146 148 L158 252 L44 252 Z" fill="#f5c542"/>
+      <rect class="silhouette" x="56" y="138" width="90" height="24" rx="12" fill="#f5c542"/>
+      <rect class="silhouette" x="70" y="270" width="24" height="16" rx="4" fill="#e8b93a"/>
+      <rect class="silhouette" x="108" y="270" width="24" height="16" rx="4" fill="#e8b93a"/>
+    </g>
+    <g class="outfit outfit-coat" data-outfit="coat">
+      <path class="silhouette" d="M52 146 L150 146 L160 250 L42 250 Z" fill="#5ca9c7"/>
+      <rect class="silhouette" x="52" y="136" width="98" height="26" rx="13" fill="#5ca9c7"/>
+      <circle cx="101" cy="170" r="6" fill="#eef8fb"/>
+      <circle cx="101" cy="190" r="6" fill="#eef8fb"/>
+      <circle cx="101" cy="210" r="6" fill="#eef8fb"/>
+    </g>
+    <g class="outfit outfit-cardigan" data-outfit="cardigan">
+      <path class="silhouette" d="M62 148 L140 148 L150 246 L52 246 Z" fill="#8fbfa3"/>
+      <rect class="silhouette" x="62" y="140" width="78" height="22" rx="11" fill="#6fa588"/>
+      <rect class="silhouette" x="97" y="150" width="6" height="90" fill="#6fa588"/>
+    </g>
+    <g class="outfit outfit-blue" data-outfit="blue">
+      <path class="silhouette" d="M60 150 L142 150 L154 248 L48 248 Z" fill="#5b8def"/>
+      <circle cx="80" cy="190" r="4" fill="#fff" opacity="0.85"/>
+      <circle cx="120" cy="205" r="4" fill="#fff" opacity="0.85"/>
+      <circle cx="100" cy="230" r="4" fill="#fff" opacity="0.85"/>
+      <rect class="silhouette" x="60" y="140" width="82" height="26" rx="13" fill="#4472e0"/>
+      <path d="M92 150 L110 150 L106 162 L96 162 Z" fill="#fff" opacity="0.9"/>
+    </g>
+    <g class="outfit outfit-pink" data-outfit="pink">
+      <path class="silhouette" d="M56 148 L146 148 L162 254 L40 254 Z" fill="#ff6fa5"/>
+      <path class="silhouette" d="M56 148 L146 148 L156 190 L46 190 Z" fill="#ff87b3"/>
+      <circle cx="70" cy="210" r="3.5" fill="#fff" opacity="0.85"/>
+      <circle cx="132" cy="222" r="3.5" fill="#fff" opacity="0.85"/>
+      <circle cx="101" cy="238" r="3.5" fill="#fff" opacity="0.85"/>
+      <circle cx="85" cy="200" r="3.5" fill="#fff" opacity="0.85"/>
+      <rect class="silhouette" x="56" y="138" width="90" height="24" rx="12" fill="#ff4f8f"/>
+    </g>
+    <g class="outfit outfit-denim" data-outfit="denim">
+      <rect class="silhouette" x="66" y="176" width="70" height="72" rx="8" fill="#6b8cae"/>
+      <rect class="silhouette" x="76" y="146" width="14" height="36" rx="5" fill="#6b8cae"/>
+      <rect class="silhouette" x="112" y="146" width="14" height="36" rx="5" fill="#6b8cae"/>
+      <rect class="silhouette" x="66" y="150" width="70" height="20" rx="10" fill="#ffffff"/>
+      <circle cx="82" cy="196" r="3" fill="#4e6a89"/>
+      <circle cx="120" cy="196" r="3" fill="#4e6a89"/>
+    </g>
+    <g class="outfit outfit-princess" data-outfit="princess">
+      <path class="silhouette" d="M50 152 L152 152 L172 250 L30 250 Z" fill="#c9a8e8"/>
+      <path class="silhouette" d="M50 152 L152 152 L160 190 L44 190 Z" fill="#d9c0f2"/>
+      <rect class="silhouette" x="58" y="140" width="86" height="24" rx="12" fill="#a978d6"/>
+      <circle cx="70" cy="205" r="3.5" fill="#f5d76e"/>
+      <circle cx="132" cy="218" r="3.5" fill="#f5d76e"/>
+      <circle cx="101" cy="232" r="3.5" fill="#f5d76e"/>
+      <circle cx="88" cy="195" r="3.5" fill="#f5d76e"/>
+      <circle cx="114" cy="200" r="3.5" fill="#f5d76e"/>
+    </g>
+    <g class="outfit outfit-pajamas" data-outfit="pajamas">
+      <path class="silhouette" d="M58 148 L144 148 L150 288 L52 288 Z" fill="#cdb8ea"/>
+      <rect class="silhouette" x="58" y="138" width="86" height="24" rx="12" fill="#b9a0dd"/>
+      <circle cx="80" cy="180" r="3" fill="#fff" opacity="0.8"/>
+      <circle cx="118" cy="200" r="3" fill="#fff" opacity="0.8"/>
+      <circle cx="95" cy="230" r="3" fill="#fff" opacity="0.8"/>
+    </g>
+    <g class="outfit outfit-robe" data-outfit="robe">
+      <path class="silhouette" d="M58 150 L144 150 L150 250 L52 250 Z" fill="#fff3e6"/>
+      <rect class="silhouette" x="58" y="140" width="86" height="24" rx="12" fill="#ffe6c9"/>
+    </g>
+
+    <!-- arms -->
+    <g class="doll-arms">
+      <rect class="silhouette" x="44" y="150" width="16" height="70" rx="8" fill="url(#skinGrad)"/>
+      <rect class="silhouette" x="142" y="150" width="16" height="70" rx="8" fill="url(#skinGrad)"/>
+      <circle class="silhouette" cx="52" cy="221" r="9" fill="url(#skinGrad)"/>
+      <circle class="silhouette" cx="150" cy="221" r="9" fill="url(#skinGrad)"/>
+    </g>
+
+    <!-- head -->
+    <g class="doll-head">
+      <ellipse class="silhouette" cx="101" cy="86" rx="52" ry="50" fill="url(#hairGrad)"/>
+      <path d="M66 46 Q83 30 103 33" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.16"/>
+      <ellipse class="silhouette" cx="72" cy="140" rx="14" ry="26" fill="url(#hairGrad)"/>
+      <ellipse class="silhouette" cx="130" cy="140" rx="14" ry="26" fill="url(#hairGrad)"/>
+      <path d="M70 60 Q64 92 72 132" stroke="#a9805f" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.45"/>
+      <path d="M132 60 Q138 92 130 132" stroke="#a9805f" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.45"/>
+      <circle class="silhouette" cx="101" cy="92" r="42" fill="url(#skinGrad)"/>
+      <!-- obočí -->
+      <path d="M72 76 Q80 70.5 89 74.5" stroke="#5f4130" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+      <path d="M113 74.5 Q122 70.5 130 76" stroke="#5f4130" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+      <!-- oči (otevřené) -->
+      <g class="eye-open">
+        <ellipse cx="80" cy="88" rx="5.2" ry="7" fill="#4a3350"/>
+        <ellipse cx="122" cy="88" rx="5.2" ry="7" fill="#4a3350"/>
+        <circle cx="78" cy="85" r="1.7" fill="#fff" opacity="0.95"/>
+        <circle cx="120" cy="85" r="1.7" fill="#fff" opacity="0.95"/>
+        <circle cx="82.5" cy="91" r="0.9" fill="#fff" opacity="0.6"/>
+        <circle cx="124.5" cy="91" r="0.9" fill="#fff" opacity="0.6"/>
+        <rect class="eyelid" x="74.5" y="82.5" width="11" height="11" fill="url(#skinGrad)"/>
+        <rect class="eyelid" x="116.5" y="82.5" width="11" height="11" fill="url(#skinGrad)"/>
+      </g>
+      <!-- oči (zavřené, pro spánek) -->
+      <g class="eye-closed">
+        <path d="M74.5 88 Q80 92.5 85.5 88" stroke="#4a3350" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+        <path d="M116.5 88 Q122 92.5 127.5 88" stroke="#4a3350" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      </g>
+      <circle cx="72" cy="102" r="6" fill="#ff9d8a" opacity="0.55"/>
+      <circle cx="130" cy="102" r="6" fill="#ff9d8a" opacity="0.55"/>
+      <!-- nosík -->
+      <path d="M99 96 Q101 99.5 103.5 96.5" stroke="#e0a888" stroke-width="1.6" fill="none" stroke-linecap="round" opacity="0.55"/>
+      <!-- pusa -->
+      <path d="M87 109 Q101 123 115 109 Q101 117 87 109 Z" fill="#c0577a" opacity="0.85"/>
+      <path d="M89 110 Q101 120 113 110" stroke="#4a3350" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      <path class="silhouette" d="M60 58 Q101 20 142 58 Q140 70 101 66 Q62 70 60 58 Z" fill="url(#hairGrad)"/>
+      <g class="doll-bow">
+        <path d="M50 52 Q40 40 46 30 Q56 34 58 48 Z" fill="#ff6fa5"/>
+        <path d="M50 52 Q60 40 54 30 Q44 34 42 48 Z" fill="#ff87b3"/>
+        <circle cx="50" cy="50" r="4.5" fill="#e8497f"/>
+      </g>
+      <rect x="64" y="118" width="15" height="9" rx="4.5" fill="#ff6fa5"/>
+      <rect x="121" y="118" width="15" height="9" rx="4.5" fill="#ff6fa5"/>
+    </g>
+
+    <!-- accessories -->
+    <g class="accessory acc-sunglasses" data-accessory="sunglasses">
+      <rect x="70" y="80" width="26" height="14" rx="6" fill="#4a3350"/>
+      <rect x="106" y="80" width="26" height="14" rx="6" fill="#4a3350"/>
+      <rect x="96" y="84" width="10" height="4" fill="#4a3350"/>
+    </g>
+    <g class="accessory acc-hat" data-accessory="hat">
+      <path d="M58 60 Q101 24 144 60 Q101 46 58 60 Z" fill="#5ca9c7"/>
+      <circle cx="101" cy="26" r="8" fill="#eef8fb"/>
+    </g>
+    <g class="accessory acc-turban" data-accessory="turban">
+      <path d="M58 60 Q101 18 144 60 Q120 44 101 50 Q82 44 58 60 Z" fill="#fff3e6"/>
+      <circle cx="130" cy="34" r="9" fill="#fff3e6"/>
+    </g>
+    <g class="accessory acc-tiara" data-accessory="tiara">
+      <path d="M74 44 L82 24 L92 38 L101 18 L110 38 L120 24 L128 44 Z" fill="#f5d76e" stroke="#e0b93a" stroke-width="1.5" stroke-linejoin="round"/>
+      <circle cx="101" cy="30" r="3.5" fill="#ff6fa5"/>
+    </g>
+
+    <g class="sparkle-burst" id="sparkleBurst">
+      <text x="45" y="150" font-size="26">✨</text>
+      <text x="150" y="120" font-size="20">✨</text>
+      <text x="100" y="60" font-size="18">✨</text>
+    </g>
+  </svg>
+</template>
+
+<script src="app.js" defer></script>
+</body>
+</html>
