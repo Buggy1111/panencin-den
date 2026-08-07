@@ -26,6 +26,7 @@
         <div class="home-sparkle s2"></div>
         <div class="home-sparkle s3"></div>
         <div class="home-sun"></div>
+        <div class="home-moon"></div>
         <div class="home-cloud c1"></div>
         <div class="home-cloud c2"></div>
       </div>
@@ -107,17 +108,21 @@
       <button class="back-btn" data-goto="home">←</button>
       <div class="eyebrow">Koupel</div>
       <div class="scene-bg bath-bg"></div>
+      <div class="sink" id="sink">
+        <div class="sink-faucet"></div>
+        <div class="sink-basin"></div>
+      </div>
       <div class="tub">
         <div class="tub-water" id="tubWater"></div>
         <div class="duck" id="duck">🦆</div>
         <div id="bubbleField"></div>
       </div>
-      <div class="doll-spot" id="dollSpotBath" style="bottom:30%; width:100px;"></div>
+      <div class="doll-spot" id="dollSpotBath" style="bottom:30%;"></div>
       <div class="side-rail right">
         <button class="primary-btn" id="fillBtn">Napustit vodu 🚿</button>
         <button class="primary-btn" id="bubbleBtn" disabled>Přidat bublinky 🫧</button>
-        <button class="primary-btn" id="toothBtn" disabled>Vyčistit zoubky 🪥</button>
         <button class="primary-btn" id="drainBtn" disabled>Utřít a obléct ✨</button>
+        <button class="primary-btn" id="toothBtn" disabled>Vyčistit zoubky 🪥</button>
       </div>
       <div class="scene-content top-caption">
         <div class="feedback" id="bathFeedback"></div>
@@ -134,7 +139,7 @@
       <div class="bed">
         <div class="blanket" id="blanket"></div>
       </div>
-      <div class="doll-spot" id="dollSpotBed" style="bottom:22%; width:96px;"></div>
+      <div class="doll-spot" id="dollSpotBed" style="bottom:22%;"></div>
       <div class="night-veil" id="nightVeil">
         <div class="goodnight-text" id="goodnightText">
           <div>Dobrou noc, sladké sny 💤</div>
@@ -213,6 +218,8 @@
       <circle cx="101" cy="170" r="6" fill="#eef8fb"/>
       <circle cx="101" cy="190" r="6" fill="#eef8fb"/>
       <circle cx="101" cy="210" r="6" fill="#eef8fb"/>
+      <rect class="silhouette" x="70" y="270" width="24" height="18" rx="4" fill="#3d7a91"/>
+      <rect class="silhouette" x="108" y="270" width="24" height="18" rx="4" fill="#3d7a91"/>
     </g>
     <g class="outfit outfit-cardigan" data-outfit="cardigan">
       <path class="silhouette" d="M62 148 L140 148 L150 246 L52 246 Z" fill="#8fbfa3"/>
@@ -336,6 +343,13 @@
     <g class="accessory acc-tiara" data-accessory="tiara">
       <path d="M74 44 L82 24 L92 38 L101 18 L110 38 L120 24 L128 44 Z" fill="#f5d76e" stroke="#e0b93a" stroke-width="1.5" stroke-linejoin="round"/>
       <circle cx="101" cy="30" r="3.5" fill="#ff6fa5"/>
+    </g>
+    <g class="accessory acc-umbrella" data-accessory="umbrella">
+      <path d="M46 18 Q101 -22 156 18 Q126 6 101 10 Q76 6 46 18 Z" fill="#5b8def" stroke="#4a3350" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M72 14 Q101 8 130 14 L130 18 Q101 12 72 18 Z" fill="#eef8fb" opacity="0.85"/>
+      <circle cx="101" cy="14" r="3" fill="#4a3350"/>
+      <path d="M101 14 L172 58" stroke="#4a3350" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <path d="M172 58 Q179 64 173 70" stroke="#4a3350" stroke-width="3.5" fill="none" stroke-linecap="round"/>
     </g>
 
     <g class="sparkle-burst" id="sparkleBurst">

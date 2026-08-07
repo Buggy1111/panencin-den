@@ -228,6 +228,19 @@
     cloud: { cls: "w-cloud", match: "cardigan", label: "Zataženo, ale příjemně.",
       why: "Je zataženo, ale teplo. Stačí lehký svetřík." },
   };
+  /* Který kus oblečení se hodí na jaké počasí — jakmile si dítě vybere počasí,
+     nabídka se zúží jen na to, co má smysl (netahat plavky do zimy). */
+  var outfitWeather = {
+    sundress: "sun", blue: "sun", pink: "sun", princess: "sun",
+    cardigan: "cloud", denim: "cloud",
+    raincoat: "rain",
+    coat: "cold",
+  };
+  var outfitNames = {
+    sundress: "Letní šatičky", raincoat: "Pláštěnka s holínkami", coat: "Zimní kabátek",
+    cardigan: "Svetřík", blue: "Modré šaty", pink: "Růžové šaty", denim: "Riflové overaly",
+    princess: "Princeznovské šaty",
+  };
   var outsideSky = document.getElementById("outsideSky");
   var weatherFx = document.getElementById("weatherFx");
   var outsideFeedback = document.getElementById("outsideFeedback");
@@ -315,11 +328,15 @@
         s.textContent = "⭐";
         b.appendChild(s);
       }
+      // Nabídka se zúží na oblečení pro zvolené počasí; dokud počasí nevybrala,
+      // vidí úplně všechno.
+      b.style.display = (!state.weather || outfitWeather[b.dataset.outfit] === state.weather) ? "" : "none";
     });
     if (state.weather) {
       outsideSky.className = "scene-bg sky-bg " + weatherMap[state.weather].cls;
       renderWeatherFx(state.weather);
     }
+    if (state.scene === "outside") setAccessory("umbrella", state.weather === "rain");
   }
 
   document.querySelectorAll('[data-weather]').forEach(function (btn) {
@@ -344,9 +361,9 @@
       outsideFeedback.classList.add("show");
       persist();
       SFX.chime();
-      VOICE.say(match
+      VOICE.say(outfitNames[state.outsideOutfit] + ". " + (match
         ? "Paráda, tohle oblečení je na dnešní počasí úplně nejlepší!"
-        : "Hezké oblečení! Jde ven s kamarádkou.");
+        : "Hezké oblečení! Jde ven s kamarádkou."));
     });
   });
 
@@ -407,17 +424,20 @@
   var bubbleField = document.getElementById("bubbleField");
   var bathFeedback = document.getElementById("bathFeedback");
   var dollSpotBath = document.getElementById("dollSpotBath");
+  var sink = document.getElementById("sink");
 
   function renderBath() {
     tubWater.style.height = state.tubFilled ? "70%" : "0%";
     var lying = state.tubFilled && !state.inRobe;
     dollSpotBath.classList.toggle("lying", lying);
-    dollSpotBath.style.bottom = lying ? "10.5%" : (state.tubFilled ? "22%" : "30%");
+    dollSpotBath.style.bottom = lying ? "4.5%" : (state.tubFilled ? "22%" : "30%");
     fillBtn.disabled = state.tubFilled;
     bubbleBtn.disabled = !state.tubFilled || state.inRobe;
-    toothBtn.disabled = !state.tubFilled || state.inRobe;
-    toothBtn.textContent = state.teeth ? "Zoubky čisté! 🪥✔️" : "Vyčistit zoubky 🪥";
     drainBtn.disabled = !state.tubFilled || state.inRobe;
+    // Zoubky se čistí u umyvadla, ne ve vaně — teprve když je osušená a oblečená.
+    toothBtn.disabled = !state.inRobe;
+    toothBtn.textContent = state.teeth ? "Zoubky čisté! 🪥✔️" : "Vyčistit zoubky 🪥";
+    sink.classList.toggle("active", state.inRobe);
     if (state.scene === "bath") setAccessory("turban", state.inRobe);
     if (state.inRobe) {
       bathFeedback.textContent = "Čistá, voňavá a v županku! ✨";
@@ -493,7 +513,8 @@
     pajamaBtn.disabled = state.pajamas;
     tuckBtn.disabled = !state.pajamas || state.inBed;
     blanket.classList.toggle("on", state.inBed);
-    dollSpotBed.style.bottom = state.inBed ? "16%" : "22%";
+    dollSpotBed.classList.toggle("lying", state.inBed);
+    dollSpotBed.style.bottom = state.inBed ? "-10.7%" : "22%";
     clockCard.style.display = state.inBed ? "flex" : "none";
     goodnightBtn.disabled = !state.inBed;
     doll.classList.toggle("sleeping", state.scene === "bedtime" && state.inBed);
@@ -561,6 +582,12 @@
     renderBath();
     renderBed();
   }
+
+  // Domovská obrazovka podle skutečné hodiny — stejná hranice 6-18/18-6 jako
+  // "Auto" motiv jinde. Stačí zjistit jednou při startu, appka se nenechává
+  // otevřenou přes půlnoc.
+  var homeHour = new Date().getHours();
+  document.querySelector(".home-sky").classList.toggle("night-time", homeHour >= 18 || homeHour < 6);
 
   goScene(state.scene || "home");
 })();
