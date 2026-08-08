@@ -1,4 +1,4 @@
-const CACHE_NAME = "panencin-den-v1";
+const CACHE_NAME = "panencin-den-v2";
 const ASSETS = [
   ".",
   "index.html",
@@ -26,20 +26,20 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
+// Network-first: dítě má vždy nejnovější verzi, když má telefon internet.
+// Cache je jen záložní řešení pro offline hraní, ne primární zdroj — jinak
+// appka aktualizaci nikdy sama neukáže, dokud se ručně nesmaže mezipaměť.
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      const network = fetch(event.request)
-        .then((response) => {
-          if (response.ok) {
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-          }
-          return response;
-        })
-        .catch(() => cached);
-      return cached || network;
-    })
+    fetch(event.request)
+      .then((response) => {
+        if (response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        }
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
