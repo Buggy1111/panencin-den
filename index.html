@@ -33,6 +33,18 @@
       <div class="doll-spot" id="dollSpotHome" style="bottom:47%"></div>
       <div class="scene-content">
         <div class="doll-name">Ahoj, Andulko! <span>Co budeme dělat?</span></div>
+        <div class="bow-picker" id="bowPicker" role="group" aria-label="Barva mašličky">
+          <button class="bow-swatch" data-bow="pink" style="--sw-a:#ff6fa5;--sw-b:#ff87b3" aria-label="Růžová"></button>
+          <button class="bow-swatch" data-bow="blue" style="--sw-a:#5b8def;--sw-b:#7ea3f2" aria-label="Modrá"></button>
+          <button class="bow-swatch" data-bow="purple" style="--sw-a:#a978d6;--sw-b:#c39fe8" aria-label="Fialová"></button>
+          <button class="bow-swatch" data-bow="gold" style="--sw-a:#f5b942;--sw-b:#f7cc73" aria-label="Zlatá"></button>
+        </div>
+        <div class="badge-strip" id="badgeStrip">
+          <div class="badge" data-badge="outside" title="Oblečená přesně na počasí">🌤️</div>
+          <div class="badge" data-badge="beach" title="Den na pláži zvládnutý">🏖️</div>
+          <div class="badge" data-badge="bath" title="Umytá, čisté zoubky i vlásky">🛁</div>
+          <div class="badge" data-badge="bedtime" title="Uspávací rituál hotový">🌙</div>
+        </div>
         <div class="room-grid">
           <button class="room-btn outside" data-goto="outside">
             <span class="badge"><span class="emo">🌤️</span></span><span class="label">Ven<span class="sub">Podle počasí</span></span>
@@ -74,8 +86,12 @@
         <button class="pick-btn" data-outfit="pink">🎀<span class="tag">Růžové šaty</span></button>
         <button class="pick-btn" data-outfit="denim">👖<span class="tag">Rifle</span></button>
         <button class="pick-btn" data-outfit="princess">👑<span class="tag">Princezna</span></button>
+        <button class="pick-btn" data-outfit="snowsuit">☃️<span class="tag">Kombinéza</span></button>
+        <button class="pick-btn" data-outfit="poncho">☔<span class="tag">Plášť s puntíky</span></button>
+        <button class="pick-btn" data-outfit="windbreaker">🍂<span class="tag">Bunda</span></button>
       </div>
       <div class="scene-content top-caption">
+        <div class="temp-badge" id="tempBadge" style="display:none"></div>
         <div class="feedback" id="outsideFeedback"></div>
       </div>
     </section>
@@ -123,6 +139,7 @@
         <button class="primary-btn" id="bubbleBtn" disabled>Přidat bublinky 🫧</button>
         <button class="primary-btn" id="drainBtn" disabled>Utřít a obléct ✨</button>
         <button class="primary-btn" id="toothBtn" disabled>Vyčistit zoubky 🪥</button>
+        <button class="primary-btn" id="hairBtn" disabled>Učesat vlásky 💇</button>
       </div>
       <div class="scene-content top-caption">
         <div class="feedback" id="bathFeedback"></div>
@@ -272,6 +289,33 @@
       <path class="silhouette" d="M58 150 L144 150 L150 250 L52 250 Z" fill="#fff3e6"/>
       <rect class="silhouette" x="58" y="140" width="86" height="24" rx="12" fill="#ffe6c9"/>
     </g>
+    <g class="outfit outfit-snowsuit" data-outfit="snowsuit">
+      <path class="silhouette" d="M50 146 L152 146 L162 252 L40 252 Z" fill="#7b9fc7"/>
+      <rect class="silhouette" x="50" y="134" width="102" height="28" rx="14" fill="#5a7ea8"/>
+      <path d="M50 134 Q60 122 72 130 Q84 120 96 130 Q108 120 120 130 Q132 122 142 134" fill="none" stroke="#eef4fa" stroke-width="6" stroke-linecap="round"/>
+      <line x1="56" y1="180" x2="146" y2="180" stroke="#5a7ea8" stroke-width="3" opacity="0.6"/>
+      <line x1="52" y1="212" x2="150" y2="212" stroke="#5a7ea8" stroke-width="3" opacity="0.6"/>
+      <rect class="silhouette" x="70" y="270" width="26" height="18" rx="5" fill="#3d5c7d"/>
+      <rect class="silhouette" x="106" y="270" width="26" height="18" rx="5" fill="#3d5c7d"/>
+    </g>
+    <g class="outfit outfit-poncho" data-outfit="poncho">
+      <path class="silhouette" d="M54 148 L148 148 L162 250 L40 250 Z" fill="#9b6fd4"/>
+      <rect class="silhouette" x="54" y="138" width="94" height="24" rx="12" fill="#9b6fd4"/>
+      <circle cx="75" cy="190" r="4" fill="#fff" opacity="0.8"/>
+      <circle cx="115" cy="205" r="4" fill="#fff" opacity="0.8"/>
+      <circle cx="95" cy="228" r="4" fill="#fff" opacity="0.8"/>
+      <circle cx="130" cy="182" r="4" fill="#fff" opacity="0.8"/>
+      <circle cx="60" cy="220" r="4" fill="#fff" opacity="0.8"/>
+      <rect class="silhouette" x="70" y="270" width="24" height="16" rx="4" fill="#7c4fb8"/>
+      <rect class="silhouette" x="108" y="270" width="24" height="16" rx="4" fill="#7c4fb8"/>
+    </g>
+    <g class="outfit outfit-windbreaker" data-outfit="windbreaker">
+      <path class="silhouette" d="M58 148 L144 148 L154 246 L48 246 Z" fill="#d4a24e"/>
+      <rect class="silhouette" x="58" y="138" width="86" height="24" rx="12" fill="#b8842f"/>
+      <rect class="silhouette" x="94" y="150" width="6" height="90" fill="#b8842f"/>
+      <circle cx="70" cy="178" r="3" fill="#8a6621"/>
+      <circle cx="128" cy="178" r="3" fill="#8a6621"/>
+    </g>
 
     <!-- arms -->
     <g class="doll-arms">
@@ -318,9 +362,9 @@
       <path d="M89 110 Q101 120 113 110" stroke="#4a3350" stroke-width="2.2" fill="none" stroke-linecap="round"/>
       <path class="silhouette" d="M60 58 Q101 20 142 58 Q140 70 101 66 Q62 70 60 58 Z" fill="url(#hairGrad)"/>
       <g class="doll-bow">
-        <path d="M50 52 Q40 40 46 30 Q56 34 58 48 Z" fill="#ff6fa5"/>
-        <path d="M50 52 Q60 40 54 30 Q44 34 42 48 Z" fill="#ff87b3"/>
-        <circle cx="50" cy="50" r="4.5" fill="#e8497f"/>
+        <path d="M50 52 Q40 40 46 30 Q56 34 58 48 Z" fill="var(--bow-a, #ff6fa5)"/>
+        <path d="M50 52 Q60 40 54 30 Q44 34 42 48 Z" fill="var(--bow-b, #ff87b3)"/>
+        <circle cx="50" cy="50" r="4.5" fill="var(--bow-c, #e8497f)"/>
       </g>
       <rect x="64" y="118" width="15" height="9" rx="4.5" fill="#ff6fa5"/>
       <rect x="121" y="118" width="15" height="9" rx="4.5" fill="#ff6fa5"/>

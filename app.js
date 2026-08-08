@@ -10,11 +10,13 @@
     tubFilled: false,
     bubbles: 0,
     teeth: false,
+    hair: false,
     inRobe: false,
     pajamas: false,
     inBed: false,
     alarmHour: 7,
     soundOn: true,
+    bowColor: "pink",
   };
 
   try {
@@ -151,6 +153,55 @@
     b.classList.add("go");
   }
 
+  /* Barva mašličky — kosmetická volba na doll elementu přes CSS proměnné,
+     platí ve všech scénách (mašle je součást panenky, ne kroje). */
+  var bowPalette = {
+    pink: { a: "#ff6fa5", b: "#ff87b3", c: "#e8497f", label: "růžová" },
+    blue: { a: "#5b8def", b: "#7ea3f2", c: "#3a68c9", label: "modrá" },
+    purple: { a: "#a978d6", b: "#c39fe8", c: "#8355b8", label: "fialová" },
+    gold: { a: "#f5b942", b: "#f7cc73", c: "#d99a1f", label: "zlatá" },
+  };
+  function applyBowColor() {
+    var p = bowPalette[state.bowColor] || bowPalette.pink;
+    doll.style.setProperty("--bow-a", p.a);
+    doll.style.setProperty("--bow-b", p.b);
+    doll.style.setProperty("--bow-c", p.c);
+    document.querySelectorAll(".bow-swatch").forEach(function (b) {
+      b.classList.toggle("picked", b.dataset.bow === state.bowColor);
+    });
+  }
+  document.querySelectorAll(".bow-swatch").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      state.bowColor = btn.dataset.bow;
+      applyBowColor();
+      persist();
+      SFX.tap();
+      VOICE.say("Mašlička je teď " + (bowPalette[state.bowColor].label) + ".");
+    });
+  });
+
+  /* Odznáčky — trvalá sbírka nezávislá na `state` (ten se při návratu domů
+     částečně resetuje kvůli znovuhratelnosti; odznáčky ne, jsou to trofeje). */
+  var badges = { outside: false, beach: false, bath: false, bedtime: false };
+  try { Object.assign(badges, JSON.parse(localStorage.getItem("panenka-badges") || "{}")); } catch (e) { /* ignore */ }
+  function persistBadges() {
+    try { localStorage.setItem("panenka-badges", JSON.stringify(badges)); } catch (e) { /* ignore */ }
+  }
+  function renderBadges() {
+    document.querySelectorAll(".badge").forEach(function (el) {
+      el.classList.toggle("earned", !!badges[el.dataset.badge]);
+    });
+  }
+  function earnBadge(key) {
+    if (badges[key]) return;
+    badges[key] = true;
+    persistBadges();
+    renderBadges();
+    var el = document.querySelector('.badge[data-badge="' + key + '"]');
+    if (el) { el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop"); }
+    SFX.bell();
+  }
+
   var SCENE_INTRO = {
     home: "Ahoj! Co budeme dělat?",
     outside: "Jdeme ven. Nejdřív se podíváme, jaké je venku počasí.",
@@ -168,6 +219,7 @@
     state.tubFilled = false;
     state.bubbles = 0;
     state.teeth = false;
+    state.hair = false;
     state.inRobe = false;
     state.pajamas = false;
     state.inBed = false;
@@ -232,18 +284,20 @@
      nabídka se zúží jen na to, co má smysl (netahat plavky do zimy). */
   var outfitWeather = {
     sundress: "sun", blue: "sun", pink: "sun", princess: "sun",
-    cardigan: "cloud", denim: "cloud",
-    raincoat: "rain",
-    coat: "cold",
+    cardigan: "cloud", denim: "cloud", windbreaker: "cloud",
+    raincoat: "rain", poncho: "rain",
+    coat: "cold", snowsuit: "cold",
   };
   var outfitNames = {
     sundress: "Letní šatičky", raincoat: "Pláštěnka s holínkami", coat: "Zimní kabátek",
     cardigan: "Svetřík", blue: "Modré šaty", pink: "Růžové šaty", denim: "Riflové overaly",
-    princess: "Princeznovské šaty",
+    princess: "Princeznovské šaty", snowsuit: "Zimní kombinéza s botičkami",
+    poncho: "Puntíkovaná pláštěnka", windbreaker: "Podzimní bunda",
   };
   var outsideSky = document.getElementById("outsideSky");
   var weatherFx = document.getElementById("weatherFx");
   var outsideFeedback = document.getElementById("outsideFeedback");
+  var tempBadge = document.getElementById("tempBadge");
 
   /* Skutečné počasí podle polohy (Open-Meteo, bez klíče) — nastaví se jen
      jednou, při prvním vstupu ven, než si dítě samo něco vybere. Pak už se
@@ -257,7 +311,7 @@
     return "sun";
   }
   function tryAutoWeather() {
-    if (state.weather || autoWeatherTried || !("geolocation" in navigator)) return;
+    if (autoWeatherTried || !("geolocation" in navigator)) return;
     autoWeatherTried = true;
     navigator.geolocation.getCurrentPosition(
       function (pos) {
@@ -266,13 +320,19 @@
         fetch(url)
           .then(function (r) { return r.json(); })
           .then(function (data) {
-            if (state.weather || !data || !data.current) return;
-            state.weather = classifyWeatherCode(data.current.weather_code, data.current.temperature_2m);
-            renderOutside();
-            persist();
-            outsideFeedback.textContent = "Podle skutečného počasí venku! 🌦️";
-            outsideFeedback.classList.add("show");
-            VOICE.say(weatherMap[state.weather].why);
+            if (!data || !data.current) return;
+            // Teplotu ukážeme vždy, i když si dítě počasí už samo vybralo —
+            // volbu počasí ale přepíšeme jen napoprvé, dokud ji nikdo neurčil.
+            tempBadge.textContent = "🌡️ " + Math.round(data.current.temperature_2m) + " °C venku";
+            tempBadge.style.display = "";
+            if (!state.weather) {
+              state.weather = classifyWeatherCode(data.current.weather_code, data.current.temperature_2m);
+              renderOutside();
+              persist();
+              outsideFeedback.textContent = "Podle skutečného počasí venku! 🌦️";
+              outsideFeedback.classList.add("show");
+              VOICE.say(weatherMap[state.weather].why);
+            }
           })
           .catch(function () { /* offline nebo API nedostupné — zůstane ruční výběr */ });
       },
@@ -355,6 +415,7 @@
       setAccessory("tiara", state.outsideOutfit === "princess");
       renderOutside();
       var match = state.weather && weatherMap[state.weather].match === state.outsideOutfit;
+      if (match) earnBadge("outside");
       outsideFeedback.textContent = match
         ? "Paráda, přesně na tohle počasí! Jde ven s kamarádkou. 🎉"
         : "Krásně oblečená! I tak si užije procházku. 💛";
@@ -402,12 +463,14 @@
     SFX.sparkle();
     if (state.sunscreen === 1) VOICE.say("Krém chrání kůži před sluníčkem, aby se nespálila.");
     if (state.sunscreen === 5) VOICE.say("Hotovo, kůže je krásně chráněná!");
+    if (state.sunscreen >= 5 && state.onTowel) earnBadge("beach");
   });
   towelBtn.addEventListener("click", function () {
     state.onTowel = !state.onTowel;
     if (state.onTowel) {
       beachFeedback.textContent = "Ahhh, pohodička na sluníčku! 😌";
       beachFeedback.classList.add("show");
+      if (state.sunscreen >= 5) earnBadge("beach");
     }
     renderBeach();
     persist();
@@ -419,6 +482,7 @@
   var fillBtn = document.getElementById("fillBtn");
   var bubbleBtn = document.getElementById("bubbleBtn");
   var toothBtn = document.getElementById("toothBtn");
+  var hairBtn = document.getElementById("hairBtn");
   var drainBtn = document.getElementById("drainBtn");
   var tubWater = document.getElementById("tubWater");
   var bubbleField = document.getElementById("bubbleField");
@@ -434,9 +498,11 @@
     fillBtn.disabled = state.tubFilled;
     bubbleBtn.disabled = !state.tubFilled || state.inRobe;
     drainBtn.disabled = !state.tubFilled || state.inRobe;
-    // Zoubky se čistí u umyvadla, ne ve vaně — teprve když je osušená a oblečená.
+    // Zoubky a vlásky se řeší u umyvadla, ne ve vaně — teprve když je osušená a oblečená.
     toothBtn.disabled = !state.inRobe;
     toothBtn.textContent = state.teeth ? "Zoubky čisté! 🪥✔️" : "Vyčistit zoubky 🪥";
+    hairBtn.disabled = !state.inRobe;
+    hairBtn.textContent = state.hair ? "Vlásky učesané! 💇✔️" : "Učesat vlásky 💇";
     sink.classList.toggle("active", state.inRobe);
     if (state.scene === "bath") setAccessory("turban", state.inRobe);
     if (state.inRobe) {
@@ -480,6 +546,18 @@
     bathFeedback.textContent = "Čisté zoubky, žádný kaz! 🦷✨";
     bathFeedback.classList.add("show");
     VOICE.say("Zoubky si čistíme ráno a večer, aby byly zdravé a nebolely.");
+    if (state.hair) earnBadge("bath");
+  });
+  hairBtn.addEventListener("click", function () {
+    state.hair = true;
+    renderBath();
+    persist();
+    burstSparkle();
+    SFX.chime();
+    if (state.teeth) earnBadge("bath");
+    bathFeedback.textContent = "Krásně učesané vlásky! 💇✨";
+    bathFeedback.classList.add("show");
+    VOICE.say("Vlásky si po koupeli hezky pročešeme, ať se netrhají a pěkně se lesknou.");
   });
   drainBtn.addEventListener("click", function () {
     state.inRobe = true;
@@ -553,6 +631,7 @@
   goodnightBtn.addEventListener("click", function () {
     SFX.bell();
     VOICE.say("Budík zvoní v " + state.alarmHour + " hodin. Dobrou noc! Spánek pomáhá tělu i hlavě odpočinout a růst.");
+    earnBadge("bedtime");
     nightVeil.classList.add("on");
     setTimeout(function () { goodnightText.classList.add("on"); }, 300);
     var zzzTimer = setInterval(function () {
@@ -589,6 +668,8 @@
   var homeHour = new Date().getHours();
   document.querySelector(".home-sky").classList.toggle("night-time", homeHour >= 18 || homeHour < 6);
 
+  applyBowColor();
+  renderBadges();
   goScene(state.scene || "home");
 })();
 
