@@ -81,6 +81,10 @@
       bubble: guard(function () { tone(900 + Math.random() * 300, 0, 0.09, "sine", 0.08); }),
       bell: guard(function () { tone(1400, 0, 0.14, "square", 0.1); tone(1400, 0.2, 0.14, "square", 0.1); tone(1400, 0.4, 0.2, "square", 0.1); }),
       whoosh: guard(function () { noise(0, 0.3, 0.14, 2200); }),
+      fanfare: guard(function () {
+        [523.25, 659.25, 783.99, 1046.5].forEach(function (f, i) { tone(f, i * 0.13, 0.22, "triangle", 0.22); });
+        tone(1046.5, 0.5, 0.45, "sine", 0.2);
+      }),
     };
   })();
 
@@ -192,6 +196,26 @@
       el.classList.toggle("earned", !!badges[el.dataset.badge]);
     });
   }
+  var allBadgesTimer = null;
+  function checkAllBadges() {
+    if (!(badges.outside && badges.beach && badges.bath && badges.bedtime)) return;
+    SFX.fanfare();
+    burstSparkle();
+    VOICE.say("Paráda! Andulka dneska zvládla úplně všechno! Za chviličku si to může vysbírat znovu.");
+    var strip = document.getElementById("badgeStrip");
+    strip.classList.remove("celebrate");
+    void strip.offsetWidth;
+    strip.classList.add("celebrate");
+    setTimeout(function () { strip.classList.remove("celebrate"); }, 2200);
+    // Po chvilce se odznáčky vrátí do výchozího stavu, ať je má Andulka pořád
+    // co sbírat znovu — nejsou to jednorázové trofeje, ale opakovatelný cíl.
+    if (allBadgesTimer) clearTimeout(allBadgesTimer);
+    allBadgesTimer = setTimeout(function () {
+      badges.outside = badges.beach = badges.bath = badges.bedtime = false;
+      persistBadges();
+      renderBadges();
+    }, 60000);
+  }
   function earnBadge(key) {
     if (badges[key]) return;
     badges[key] = true;
@@ -200,6 +224,7 @@
     var el = document.querySelector('.badge[data-badge="' + key + '"]');
     if (el) { el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop"); }
     SFX.bell();
+    checkAllBadges();
   }
 
   var SCENE_INTRO = {
@@ -283,16 +308,22 @@
   /* Který kus oblečení se hodí na jaké počasí — jakmile si dítě vybere počasí,
      nabídka se zúží jen na to, co má smysl (netahat plavky do zimy). */
   var outfitWeather = {
-    sundress: "sun", blue: "sun", pink: "sun", princess: "sun",
-    cardigan: "cloud", denim: "cloud", windbreaker: "cloud",
-    raincoat: "rain", poncho: "rain",
-    coat: "cold", snowsuit: "cold",
+    sundress: "sun", blue: "sun", pink: "sun", princess: "sun", green: "sun", yellow: "sun",
+    cardigan: "cloud", denim: "cloud", windbreaker: "cloud", grayhoodie: "cloud", vest: "cloud", stripedtee: "cloud",
+    raincoat: "rain", poncho: "rain", blueraincoat: "rain", greenstriped: "rain", pinkponcho: "rain", yellowoveralls: "rain",
+    coat: "cold", snowsuit: "cold", purplesnowsuit: "cold", redcoat: "cold", graysweaterscarf: "cold", greenparka: "cold",
   };
   var outfitNames = {
     sundress: "Letní šatičky", raincoat: "Pláštěnka s holínkami", coat: "Zimní kabátek",
     cardigan: "Svetřík", blue: "Modré šaty", pink: "Růžové šaty", denim: "Riflové overaly",
     princess: "Princeznovské šaty", snowsuit: "Zimní kombinéza s botičkami",
     poncho: "Puntíkovaná pláštěnka", windbreaker: "Podzimní bunda",
+    green: "Zelené šatičky", yellow: "Žluté tílko", grayhoodie: "Šedá mikina",
+    vest: "Zelená vesta", stripedtee: "Pruhované triko", blueraincoat: "Modrá pláštěnka",
+    greenstriped: "Zelená pruhovaná pláštěnka s holínkami", pinkponcho: "Růžové pončo s puntíky",
+    yellowoveralls: "Žlutý nepromokavý overal", purplesnowsuit: "Fialová zimní kombinéza",
+    redcoat: "Červený zimní kabát", graysweaterscarf: "Šedý svetr se šálou",
+    greenparka: "Zelená parka s kožíškem",
   };
   var outsideSky = document.getElementById("outsideSky");
   var weatherFx = document.getElementById("weatherFx");
@@ -313,6 +344,8 @@
   function tryAutoWeather() {
     if (autoWeatherTried || !("geolocation" in navigator)) return;
     autoWeatherTried = true;
+    tempBadge.textContent = "🌡️ zjišťuji počasí venku…";
+    tempBadge.style.display = "";
     navigator.geolocation.getCurrentPosition(
       function (pos) {
         var url = "https://api.open-meteo.com/v1/forecast?latitude=" + pos.coords.latitude +
@@ -320,11 +353,10 @@
         fetch(url)
           .then(function (r) { return r.json(); })
           .then(function (data) {
-            if (!data || !data.current) return;
+            if (!data || !data.current) { tempBadge.style.display = "none"; return; }
             // Teplotu ukážeme vždy, i když si dítě počasí už samo vybralo —
             // volbu počasí ale přepíšeme jen napoprvé, dokud ji nikdo neurčil.
             tempBadge.textContent = "🌡️ " + Math.round(data.current.temperature_2m) + " °C venku";
-            tempBadge.style.display = "";
             if (!state.weather) {
               state.weather = classifyWeatherCode(data.current.weather_code, data.current.temperature_2m);
               renderOutside();
@@ -334,10 +366,10 @@
               VOICE.say(weatherMap[state.weather].why);
             }
           })
-          .catch(function () { /* offline nebo API nedostupné — zůstane ruční výběr */ });
+          .catch(function () { tempBadge.style.display = "none"; });
       },
-      function () { /* zamítnuto/nedostupné — zůstane ruční výběr */ },
-      { timeout: 6000 }
+      function () { tempBadge.style.display = "none"; },
+      { timeout: 10000 }
     );
   }
 

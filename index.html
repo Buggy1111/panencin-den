@@ -89,6 +89,19 @@
         <button class="pick-btn" data-outfit="snowsuit">☃️<span class="tag">Kombinéza</span></button>
         <button class="pick-btn" data-outfit="poncho">☔<span class="tag">Plášť s puntíky</span></button>
         <button class="pick-btn" data-outfit="windbreaker">🍂<span class="tag">Bunda</span></button>
+        <button class="pick-btn" data-outfit="green">🍏<span class="tag">Zelené šatičky</span></button>
+        <button class="pick-btn" data-outfit="yellow">🌻<span class="tag">Žluté tílko</span></button>
+        <button class="pick-btn" data-outfit="grayhoodie">🧢<span class="tag">Šedá mikina</span></button>
+        <button class="pick-btn" data-outfit="vest">🌿<span class="tag">Zelená vesta</span></button>
+        <button class="pick-btn" data-outfit="stripedtee">⚓<span class="tag">Pruhované triko</span></button>
+        <button class="pick-btn" data-outfit="blueraincoat">💧<span class="tag">Modrá pláštěnka</span></button>
+        <button class="pick-btn" data-outfit="greenstriped">🐸<span class="tag">Zelená pláštěnka</span></button>
+        <button class="pick-btn" data-outfit="pinkponcho">🌸<span class="tag">Růžové pončo</span></button>
+        <button class="pick-btn" data-outfit="yellowoveralls">🐝<span class="tag">Žlutý overal</span></button>
+        <button class="pick-btn" data-outfit="purplesnowsuit">🔮<span class="tag">Fialová kombinéza</span></button>
+        <button class="pick-btn" data-outfit="redcoat">❤️<span class="tag">Červený kabát</span></button>
+        <button class="pick-btn" data-outfit="graysweaterscarf">🐑<span class="tag">Svetr se šálou</span></button>
+        <button class="pick-btn" data-outfit="greenparka">🌲<span class="tag">Zelená parka</span></button>
       </div>
       <div class="scene-content top-caption">
         <div class="temp-badge" id="tempBadge" style="display:none"></div>
@@ -181,7 +194,7 @@
   </div>
 </div>
 
-<footer>Pro Andulku 🎀 — hraje se přímo tady, bez reklam.</footer>
+<footer>Hra pro Andulku 🎀</footer>
 
 <!-- doll template, cloned into whichever room-spot is active -->
 <template id="dollTemplate">
@@ -315,6 +328,103 @@
       <rect class="silhouette" x="94" y="150" width="6" height="90" fill="#b8842f"/>
       <circle cx="70" cy="178" r="3" fill="#8a6621"/>
       <circle cx="128" cy="178" r="3" fill="#8a6621"/>
+    </g>
+    <g class="outfit outfit-green" data-outfit="green">
+      <path class="silhouette" d="M60 150 L142 150 L156 250 L46 250 Z" fill="#7bc47f"/>
+      <circle cx="80" cy="190" r="4" fill="#fceb8f" opacity="0.9"/>
+      <circle cx="120" cy="205" r="4" fill="#fceb8f" opacity="0.9"/>
+      <circle cx="100" cy="230" r="4" fill="#fceb8f" opacity="0.9"/>
+      <rect class="silhouette" x="60" y="140" width="82" height="26" rx="13" fill="#5da562"/>
+    </g>
+    <g class="outfit outfit-yellow" data-outfit="yellow">
+      <path class="silhouette" d="M66 150 L136 150 L128 220 L74 220 Z" fill="#f5d76e"/>
+      <rect class="silhouette" x="66" y="140" width="70" height="22" rx="11" fill="#e8c34a"/>
+      <circle cx="85" cy="180" r="3" fill="#fff" opacity="0.85"/>
+      <circle cx="115" cy="195" r="3" fill="#fff" opacity="0.85"/>
+    </g>
+    <g class="outfit outfit-grayhoodie" data-outfit="grayhoodie">
+      <path class="silhouette" d="M60 148 L142 148 L152 248 L50 248 Z" fill="#9ea7b3"/>
+      <rect class="silhouette" x="60" y="138" width="82" height="24" rx="12" fill="#7d8794"/>
+      <path class="silhouette" d="M78 210 L124 210 L120 240 L82 240 Z" fill="#7d8794" opacity="0.7"/>
+    </g>
+    <g class="outfit outfit-vest" data-outfit="vest">
+      <path class="silhouette" d="M62 148 L140 148 L150 246 L52 246 Z" fill="#4f8f6b"/>
+      <rect class="silhouette" x="62" y="140" width="78" height="22" rx="11" fill="#3d7355"/>
+      <rect class="silhouette" x="97" y="150" width="6" height="90" fill="#3d7355"/>
+    </g>
+    <g class="outfit outfit-stripedtee" data-outfit="stripedtee">
+      <path class="silhouette" d="M60 150 L142 150 L156 250 L46 250 Z" fill="#eef4fa"/>
+      <rect x="46" y="168" width="110" height="8" fill="#3a5a8a"/>
+      <rect x="46" y="192" width="110" height="8" fill="#3a5a8a"/>
+      <rect x="46" y="216" width="110" height="8" fill="#3a5a8a"/>
+      <rect x="46" y="240" width="110" height="8" fill="#3a5a8a"/>
+      <rect class="silhouette" x="60" y="140" width="82" height="26" rx="13" fill="#3a5a8a"/>
+    </g>
+    <g class="outfit outfit-blueraincoat" data-outfit="blueraincoat">
+      <path class="silhouette" d="M56 148 L146 148 L158 252 L44 252 Z" fill="#5b8def"/>
+      <rect class="silhouette" x="56" y="138" width="90" height="24" rx="12" fill="#5b8def"/>
+      <rect class="silhouette" x="70" y="270" width="24" height="16" rx="4" fill="#3a68c9"/>
+      <rect class="silhouette" x="108" y="270" width="24" height="16" rx="4" fill="#3a68c9"/>
+    </g>
+    <g class="outfit outfit-greenstriped" data-outfit="greenstriped">
+      <path class="silhouette" d="M56 148 L146 148 L158 252 L44 252 Z" fill="#4f9e6e"/>
+      <rect x="44" y="180" width="114" height="7" fill="#eef4fa" opacity="0.85"/>
+      <rect x="44" y="210" width="114" height="7" fill="#eef4fa" opacity="0.85"/>
+      <rect class="silhouette" x="56" y="138" width="90" height="24" rx="12" fill="#3d7d58"/>
+      <rect class="silhouette" x="70" y="270" width="24" height="16" rx="4" fill="#2f6244"/>
+      <rect class="silhouette" x="108" y="270" width="24" height="16" rx="4" fill="#2f6244"/>
+    </g>
+    <g class="outfit outfit-pinkponcho" data-outfit="pinkponcho">
+      <path class="silhouette" d="M54 148 L148 148 L162 250 L40 250 Z" fill="#ff6fa5"/>
+      <rect class="silhouette" x="54" y="138" width="94" height="24" rx="12" fill="#ff6fa5"/>
+      <circle cx="75" cy="190" r="4" fill="#fff" opacity="0.8"/>
+      <circle cx="115" cy="205" r="4" fill="#fff" opacity="0.8"/>
+      <circle cx="95" cy="228" r="4" fill="#fff" opacity="0.8"/>
+      <circle cx="130" cy="182" r="4" fill="#fff" opacity="0.8"/>
+      <rect class="silhouette" x="70" y="270" width="24" height="16" rx="4" fill="#e8497f"/>
+      <rect class="silhouette" x="108" y="270" width="24" height="16" rx="4" fill="#e8497f"/>
+    </g>
+    <g class="outfit outfit-yellowoveralls" data-outfit="yellowoveralls">
+      <rect class="silhouette" x="66" y="176" width="70" height="72" rx="8" fill="#f5c542"/>
+      <rect class="silhouette" x="76" y="146" width="14" height="36" rx="5" fill="#f5c542"/>
+      <rect class="silhouette" x="112" y="146" width="14" height="36" rx="5" fill="#f5c542"/>
+      <rect class="silhouette" x="66" y="150" width="70" height="20" rx="10" fill="#eef4fa"/>
+      <circle cx="82" cy="196" r="3" fill="#c99a1f"/>
+      <circle cx="120" cy="196" r="3" fill="#c99a1f"/>
+      <rect class="silhouette" x="70" y="270" width="24" height="16" rx="4" fill="#c99a1f"/>
+      <rect class="silhouette" x="108" y="270" width="24" height="16" rx="4" fill="#c99a1f"/>
+    </g>
+    <g class="outfit outfit-purplesnowsuit" data-outfit="purplesnowsuit">
+      <path class="silhouette" d="M50 146 L152 146 L162 252 L40 252 Z" fill="#a978d6"/>
+      <rect class="silhouette" x="50" y="134" width="102" height="28" rx="14" fill="#8355b8"/>
+      <path d="M50 134 Q60 122 72 130 Q84 120 96 130 Q108 120 120 130 Q132 122 142 134" fill="none" stroke="#eef4fa" stroke-width="6" stroke-linecap="round"/>
+      <line x1="56" y1="180" x2="146" y2="180" stroke="#8355b8" stroke-width="3" opacity="0.6"/>
+      <line x1="52" y1="212" x2="150" y2="212" stroke="#8355b8" stroke-width="3" opacity="0.6"/>
+      <rect class="silhouette" x="70" y="270" width="26" height="18" rx="5" fill="#5c3a83"/>
+      <rect class="silhouette" x="106" y="270" width="26" height="18" rx="5" fill="#5c3a83"/>
+    </g>
+    <g class="outfit outfit-redcoat" data-outfit="redcoat">
+      <path class="silhouette" d="M52 146 L150 146 L160 250 L42 250 Z" fill="#e0594f"/>
+      <rect class="silhouette" x="52" y="136" width="98" height="26" rx="13" fill="#c9463d"/>
+      <circle cx="101" cy="170" r="6" fill="#fff3e0"/>
+      <circle cx="101" cy="190" r="6" fill="#fff3e0"/>
+      <circle cx="101" cy="210" r="6" fill="#fff3e0"/>
+      <rect class="silhouette" x="70" y="270" width="24" height="18" rx="4" fill="#96332c"/>
+      <rect class="silhouette" x="106" y="270" width="24" height="18" rx="4" fill="#96332c"/>
+    </g>
+    <g class="outfit outfit-graysweaterscarf" data-outfit="graysweaterscarf">
+      <path class="silhouette" d="M62 148 L140 148 L150 246 L52 246 Z" fill="#8a95a3"/>
+      <rect class="silhouette" x="62" y="140" width="78" height="22" rx="11" fill="#6d7885"/>
+      <rect class="silhouette" x="97" y="150" width="6" height="90" fill="#6d7885"/>
+      <path class="silhouette" d="M74 142 Q101 156 128 142 Q124 158 101 164 Q78 158 74 142 Z" fill="#c9463d"/>
+      <rect x="94" y="156" width="10" height="30" rx="3" fill="#c9463d"/>
+    </g>
+    <g class="outfit outfit-greenparka" data-outfit="greenparka">
+      <path class="silhouette" d="M52 146 L150 146 L160 250 L42 250 Z" fill="#6b8f5c"/>
+      <rect class="silhouette" x="52" y="136" width="98" height="26" rx="13" fill="#54724a"/>
+      <path d="M52 136 Q66 122 82 132 Q101 120 120 132 Q136 122 150 136" fill="none" stroke="#eef4fa" stroke-width="6" stroke-linecap="round" opacity="0.9"/>
+      <rect class="silhouette" x="70" y="270" width="24" height="18" rx="4" fill="#3f5638"/>
+      <rect class="silhouette" x="106" y="270" width="24" height="18" rx="4" fill="#3f5638"/>
     </g>
 
     <!-- arms -->

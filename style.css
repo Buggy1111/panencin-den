@@ -317,6 +317,12 @@
   .badge.earned { filter: none; background: rgba(255,255,255,0.85); box-shadow: var(--shadow); }
   .badge.pop { animation: badge-pop 0.5s ease; }
   @keyframes badge-pop { 0% { transform: scale(0.6); } 60% { transform: scale(1.3); } 100% { transform: scale(1); } }
+  /* Fanfára — všechny 4 odznáčky najednou zazáří, když je sbírka kompletní. */
+  .badge-strip.celebrate .badge { animation: badge-celebrate 0.7s ease-in-out 3; }
+  @keyframes badge-celebrate {
+    0%, 100% { transform: scale(1) rotate(0deg); box-shadow: var(--shadow); }
+    50% { transform: scale(1.25) rotate(-6deg); box-shadow: 0 0 0 6px rgba(245,185,66,0.35), var(--shadow); }
+  }
 
   .room-grid {
     display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%;
