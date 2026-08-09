@@ -13,14 +13,13 @@
 </head>
 <body>
 
-<h1><span class="heart">♥</span> Panenčin den <span class="heart">♥</span></h1>
-
 <div class="stage-wrap">
   <div class="stage" id="stage">
     <button class="sound-btn" id="soundBtn" aria-label="Zapnout/vypnout zvuk">🔊</button>
 
     <!-- ============ HOME ============ -->
     <section class="scene active" data-scene="home">
+      <h1><span class="heart">♥</span> Panenčin den <span class="heart">♥</span></h1>
       <div class="scene-bg home-sky">
         <div class="home-sparkle s1"></div>
         <div class="home-sparkle s2"></div>
@@ -30,7 +29,7 @@
         <div class="home-cloud c1"></div>
         <div class="home-cloud c2"></div>
       </div>
-      <div class="doll-spot" id="dollSpotHome" style="bottom:47%"></div>
+      <div class="doll-spot" id="dollSpotHome" style="bottom:62%"></div>
       <div class="scene-content">
         <div class="doll-name">Ahoj, Andulko! <span>Co budeme dělat?</span></div>
         <div class="bow-picker" id="bowPicker" role="group" aria-label="Barva mašličky">
@@ -43,22 +42,35 @@
           <div class="badge" data-badge="outside" title="Oblečená přesně na počasí">🌤️</div>
           <div class="badge" data-badge="beach" title="Den na pláži zvládnutý">🏖️</div>
           <div class="badge" data-badge="bath" title="Umytá, čisté zoubky i vlásky">🛁</div>
+          <div class="badge" data-badge="breakfast" title="Snídaně snědená">🥣</div>
+          <div class="badge" data-badge="lunch" title="Oběd snědený">🍝</div>
+          <div class="badge" data-badge="dinner" title="Večeře snědená">🍽️</div>
           <div class="badge" data-badge="bedtime" title="Uspávací rituál hotový">🌙</div>
         </div>
         <div class="room-grid">
           <button class="room-btn outside" data-goto="outside">
             <span class="badge"><span class="emo">🌤️</span></span><span class="label">Ven<span class="sub">Podle počasí</span></span>
           </button>
+          <button class="room-btn breakfast" data-goto="meal" data-meal="breakfast">
+            <span class="badge"><span class="emo">🥣</span></span><span class="label">Snídaně<span class="sub">Dobré ráno</span></span>
+          </button>
           <button class="room-btn beach" data-goto="beach">
             <span class="badge"><span class="emo">🏖️</span></span><span class="label">Pláž<span class="sub">Krém a deka</span></span>
+          </button>
+          <button class="room-btn lunch" data-goto="meal" data-meal="lunch">
+            <span class="badge"><span class="emo">🍝</span></span><span class="label">Oběd<span class="sub">Dobrou chuť</span></span>
           </button>
           <button class="room-btn bath" data-goto="bath">
             <span class="badge"><span class="emo">🛁</span></span><span class="label">Koupel<span class="sub">Bublinky</span></span>
           </button>
-          <button class="room-btn night" data-goto="bedtime">
+          <button class="room-btn dinner" data-goto="meal" data-meal="dinner">
+            <span class="badge"><span class="emo">🍽️</span></span><span class="label">Večeře<span class="sub">Dobrou chuť</span></span>
+          </button>
+          <button class="room-btn night wide" data-goto="bedtime">
             <span class="badge"><span class="emo">🌙</span></span><span class="label">Spinkat<span class="sub">Pyžamko a budík</span></span>
           </button>
         </div>
+        <footer>Hra pro Andulku 🎀</footer>
       </div>
     </section>
 
@@ -159,6 +171,40 @@
       </div>
     </section>
 
+    <!-- ============ MEAL (snídaně/oběd/večeře — jedna scéna, tři kontexty) ============ -->
+    <section class="scene" data-scene="meal">
+      <button class="back-btn" data-goto="home">←</button>
+      <div class="eyebrow" id="mealEyebrow">Jídlo</div>
+      <div class="scene-bg meal-bg" id="mealBg"></div>
+      <div class="table">
+        <div class="plate">
+          <div class="plate-food" id="plateFood"></div>
+        </div>
+      </div>
+      <div class="doll-spot" id="dollSpotMeal" style="bottom:28%;"></div>
+      <div class="side-rail left" id="mealFoodRail">
+        <button class="pick-btn" data-meal="breakfast" data-food="porridge">🥣<span class="tag">Kaše s ovocem</span></button>
+        <button class="pick-btn" data-meal="breakfast" data-food="toast">🍞<span class="tag">Toast s medem</span></button>
+        <button class="pick-btn" data-meal="breakfast" data-food="cereal">🥛<span class="tag">Mléko s cereáliemi</span></button>
+        <button class="pick-btn" data-meal="breakfast" data-food="egg">🍳<span class="tag">Vajíčko</span></button>
+        <button class="pick-btn" data-meal="lunch" data-food="soup">🍲<span class="tag">Polévka</span></button>
+        <button class="pick-btn" data-meal="lunch" data-food="pasta">🍝<span class="tag">Těstoviny se zeleninou</span></button>
+        <button class="pick-btn" data-meal="lunch" data-food="salad">🥗<span class="tag">Salát</span></button>
+        <button class="pick-btn" data-meal="lunch" data-food="chicken">🍗<span class="tag">Kuřecí s rýží</span></button>
+        <button class="pick-btn" data-meal="dinner" data-food="dumplings">🍛<span class="tag">Knedlíky s omáčkou</span></button>
+        <button class="pick-btn" data-meal="dinner" data-food="sandwich">🥪<span class="tag">Chleba se sýrem</span></button>
+        <button class="pick-btn" data-meal="dinner" data-food="veggies">🥗<span class="tag">Zeleninový talíř</span></button>
+        <button class="pick-btn" data-meal="dinner" data-food="fruit">🍓<span class="tag">Ovoce</span></button>
+      </div>
+      <div class="side-rail right">
+        <button class="primary-btn" id="setTableBtn">Prostřít stůl 🍽️</button>
+        <button class="primary-btn" id="eatBtn" disabled>Ochutnat 😋</button>
+      </div>
+      <div class="scene-content top-caption">
+        <div class="feedback" id="mealFeedback"></div>
+      </div>
+    </section>
+
     <!-- ============ BEDTIME ============ -->
     <section class="scene" data-scene="bedtime">
       <button class="back-btn" data-goto="home">←</button>
@@ -193,8 +239,6 @@
 
   </div>
 </div>
-
-<footer>Hra pro Andulku 🎀</footer>
 
 <!-- doll template, cloned into whichever room-spot is active -->
 <template id="dollTemplate">

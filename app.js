@@ -17,6 +17,10 @@
     alarmHour: 7,
     soundOn: true,
     bowColor: "pink",
+    currentMeal: null,
+    mealTableSet: false,
+    mealFood: null,
+    mealBites: 0,
   };
 
   try {
@@ -133,6 +137,7 @@
     outside: document.getElementById("dollSpotOutside"),
     beach: document.getElementById("dollSpotBeach"),
     bath: document.getElementById("dollSpotBath"),
+    meal: document.getElementById("dollSpotMeal"),
     bedtime: document.getElementById("dollSpotBed"),
   };
 
@@ -186,7 +191,7 @@
 
   /* Odznáčky — trvalá sbírka nezávislá na `state` (ten se při návratu domů
      částečně resetuje kvůli znovuhratelnosti; odznáčky ne, jsou to trofeje). */
-  var badges = { outside: false, beach: false, bath: false, bedtime: false };
+  var badges = { outside: false, beach: false, bath: false, breakfast: false, lunch: false, dinner: false, bedtime: false };
   try { Object.assign(badges, JSON.parse(localStorage.getItem("panenka-badges") || "{}")); } catch (e) { /* ignore */ }
   function persistBadges() {
     try { localStorage.setItem("panenka-badges", JSON.stringify(badges)); } catch (e) { /* ignore */ }
@@ -198,7 +203,9 @@
   }
   var allBadgesTimer = null;
   function checkAllBadges() {
-    if (!(badges.outside && badges.beach && badges.bath && badges.bedtime)) return;
+    var allDone = badges.outside && badges.beach && badges.bath &&
+      badges.breakfast && badges.lunch && badges.dinner && badges.bedtime;
+    if (!allDone) return;
     SFX.fanfare();
     burstSparkle();
     VOICE.say("Paráda! Andulka dneska zvládla úplně všechno! Za chviličku si to může vysbírat znovu.");
@@ -211,7 +218,7 @@
     // co sbírat znovu — nejsou to jednorázové trofeje, ale opakovatelný cíl.
     if (allBadgesTimer) clearTimeout(allBadgesTimer);
     allBadgesTimer = setTimeout(function () {
-      badges.outside = badges.beach = badges.bath = badges.bedtime = false;
+      badges.outside = badges.beach = badges.bath = badges.breakfast = badges.lunch = badges.dinner = badges.bedtime = false;
       persistBadges();
       renderBadges();
     }, 60000);
@@ -248,6 +255,9 @@
     state.inRobe = false;
     state.pajamas = false;
     state.inBed = false;
+    state.mealTableSet = false;
+    state.mealFood = null;
+    state.mealBites = 0;
     if (wakeBtn && wakeBtn._timer) clearInterval(wakeBtn._timer);
     if (nightVeil) nightVeil.classList.remove("on");
     if (goodnightText) goodnightText.classList.remove("on");
@@ -286,12 +296,16 @@
     persist();
     if (changed) {
       SFX.select();
-      if (SCENE_INTRO[name]) VOICE.say(SCENE_INTRO[name]);
+      var intro = name === "meal" ? mealMeta[state.currentMeal || "dinner"].intro : SCENE_INTRO[name];
+      if (intro) VOICE.say(intro);
     }
   }
 
   document.querySelectorAll("[data-goto]").forEach(function (btn) {
-    btn.addEventListener("click", function () { goScene(btn.dataset.goto); });
+    btn.addEventListener("click", function () {
+      if (btn.dataset.meal) state.currentMeal = btn.dataset.meal;
+      goScene(btn.dataset.goto);
+    });
   });
 
   /* ---------------- OUTSIDE ---------------- */
@@ -475,7 +489,7 @@
     sunscreenWrap.style.display = state.sunscreen >= 5 ? "none" : "flex";
     towelMat.classList.toggle("active", state.onTowel);
     dollSpotBeach.classList.toggle("lying", state.onTowel);
-    dollSpotBeach.style.bottom = state.onTowel ? "-3%" : "26%";
+    dollSpotBeach.style.bottom = state.onTowel ? "4.8%" : "26%";
     if (state.scene === "beach") setAccessory("sunglasses", state.onTowel);
     towelBtn.textContent = state.onTowel ? "Zvednout z deky" : "Položit na deku";
     if (state.sunscreen >= 5 && !state.onTowel) {
@@ -526,7 +540,7 @@
     tubWater.style.height = state.tubFilled ? "70%" : "0%";
     var lying = state.tubFilled && !state.inRobe;
     dollSpotBath.classList.toggle("lying", lying);
-    dollSpotBath.style.bottom = lying ? "4.5%" : (state.tubFilled ? "22%" : "30%");
+    dollSpotBath.style.bottom = lying ? "9.8%" : (state.tubFilled ? "22%" : "30%");
     fillBtn.disabled = state.tubFilled;
     bubbleBtn.disabled = !state.tubFilled || state.inRobe;
     drainBtn.disabled = !state.tubFilled || state.inRobe;
@@ -601,6 +615,92 @@
     VOICE.say("Hotovo! Čistá, osušená a voňavá.");
   });
 
+  /* ---------------- MEAL (snídaně/oběd/večeře — jedna scéna, tři kontexty) ---------------- */
+  var mealEyebrow = document.getElementById("mealEyebrow");
+  var mealBg = document.getElementById("mealBg");
+  var mealFeedback = document.getElementById("mealFeedback");
+  var plateFood = document.getElementById("plateFood");
+  var setTableBtn = document.getElementById("setTableBtn");
+  var eatBtn = document.getElementById("eatBtn");
+
+  var mealMeta = {
+    breakfast: { title: "Snídaně", cls: "", intro: "Dobré ráno! Co si dá Andulka k snídani?" },
+    lunch: { title: "Oběd", cls: "midday", intro: "Je poledne, čas na oběd." },
+    dinner: { title: "Večeře", cls: "evening", intro: "Slunce zapadá, čas na večeři." },
+  };
+  var mealFoodInfo = {
+    porridge: { label: "Kaše s ovocem", emo: "🥣", why: "Kaše zasytí a dá sílu na celé dopoledne." },
+    toast: { label: "Toast s medem", emo: "🍞", why: "Celozrnný toast s medem je sladká a zdravá snídaně." },
+    cereal: { label: "Mléko s cereáliemi", emo: "🥛", why: "Mléko dodá vápník na silné kosti a zoubky." },
+    egg: { label: "Vajíčko", emo: "🍳", why: "Vajíčko je plné bílkovin, ze kterých rosteme." },
+    soup: { label: "Polévka", emo: "🍲", why: "Teplá polévka zahřeje bříško a je plná vitamínů." },
+    pasta: { label: "Těstoviny se zeleninou", emo: "🍝", why: "Těstoviny dodají energii a zelenina vitamíny." },
+    salad: { label: "Salát", emo: "🥗", why: "Čerstvá zelenina je plná vitamínů a vlákniny." },
+    chicken: { label: "Kuřecí s rýží", emo: "🍗", why: "Kuřecí maso a rýže dodají sílu na odpoledne." },
+    dumplings: { label: "Knedlíky s omáčkou", emo: "🍛", why: "Klasická česká večeře, moc dobrá." },
+    sandwich: { label: "Chleba se sýrem", emo: "🥪", why: "Lehká večeře, ať se dobře usíná." },
+    veggies: { label: "Zeleninový talíř", emo: "🥗", why: "Zelenina večer je lehká na bříško." },
+    fruit: { label: "Ovoce", emo: "🍓", why: "Sladké ovoce místo sladkostí." },
+  };
+
+  function renderMeal() {
+    var meal = state.currentMeal || "dinner";
+    var meta = mealMeta[meal];
+    mealEyebrow.textContent = meta.title;
+    mealBg.className = "scene-bg meal-bg" + (meta.cls ? " " + meta.cls : "");
+    document.querySelectorAll("#mealFoodRail [data-food]").forEach(function (b) {
+      b.style.display = b.dataset.meal === meal ? "" : "none";
+      b.classList.toggle("picked", b.dataset.food === state.mealFood);
+    });
+    setTableBtn.disabled = state.mealTableSet;
+    setTableBtn.textContent = state.mealTableSet ? "Stůl prostřený ✔️" : "Prostřít stůl 🍽️";
+    eatBtn.disabled = !state.mealTableSet || !state.mealFood || state.mealBites >= 5;
+    eatBtn.textContent = state.mealBites >= 5 ? "Mňam, hotovo! 😋✔️" : "Ochutnat 😋";
+    var info = state.mealFood ? mealFoodInfo[state.mealFood] : null;
+    plateFood.textContent = info ? info.emo : "";
+    plateFood.classList.toggle("on", !!info);
+  }
+
+  document.querySelectorAll("#mealFoodRail [data-food]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      state.mealFood = btn.dataset.food;
+      state.mealBites = 0;
+      renderMeal();
+      persist();
+      SFX.tap();
+      var info = mealFoodInfo[state.mealFood];
+      mealFeedback.textContent = info.label + " — dobrá volba! 😋";
+      mealFeedback.classList.add("show");
+      VOICE.say(info.label + ". " + info.why);
+    });
+  });
+  setTableBtn.addEventListener("click", function () {
+    state.mealTableSet = true;
+    renderMeal();
+    persist();
+    SFX.select();
+    VOICE.say("Prostřeme pěkně stůl, talíř a příbor.");
+  });
+  eatBtn.addEventListener("click", function () {
+    if (state.mealBites >= 5) return;
+    state.mealBites++;
+    renderMeal();
+    persist();
+    if (state.mealBites >= 5) {
+      SFX.chime();
+      burstSparkle();
+      mealFeedback.textContent = "Mňam, všechno snědla! 😋";
+      mealFeedback.classList.add("show");
+      VOICE.say("Mňam, všechno snědla! Za chviličku si jde umýt pusu a vyčistit zoubky.");
+      earnBadge(state.currentMeal || "dinner");
+    } else {
+      SFX.bubble();
+      mealFeedback.textContent = "Mňam! (" + state.mealBites + "/5)";
+      mealFeedback.classList.add("show");
+      if (state.mealBites === 1) VOICE.say("Papáme pomalu a pořádně kousáme.");
+    }
+  });
+
   /* ---------------- BEDTIME ---------------- */
   var pajamaBtn = document.getElementById("pajamaBtn");
   var tuckBtn = document.getElementById("tuckBtn");
@@ -624,7 +724,7 @@
     tuckBtn.disabled = !state.pajamas || state.inBed;
     blanket.classList.toggle("on", state.inBed);
     dollSpotBed.classList.toggle("lying", state.inBed);
-    dollSpotBed.style.bottom = state.inBed ? "-10.7%" : "22%";
+    dollSpotBed.style.bottom = state.inBed ? "-5.1%" : "22%";
     clockCard.style.display = state.inBed ? "flex" : "none";
     goodnightBtn.disabled = !state.inBed;
     doll.classList.toggle("sleeping", state.scene === "bedtime" && state.inBed);
@@ -691,6 +791,7 @@
     renderOutside();
     renderBeach();
     renderBath();
+    renderMeal();
     renderBed();
   }
 

@@ -43,62 +43,50 @@
   html, body { margin: 0; height: 100%; }
 
   body {
-    min-height: 100vh;
+    height: 100dvh;
     background: var(--chrome-bg);
     color: var(--chrome-text);
     font-family: ui-rounded, "SF Pro Rounded", -apple-system, "Segoe UI", system-ui, sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 14px;
-    padding: 14px 12px 24px;
-    overflow-x: hidden;
+    overflow: hidden;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
     user-select: none;
   }
 
   h1 {
-    font-size: clamp(1.3rem, 5vw, 1.7rem);
-    margin: 4px 0 0;
+    position: absolute;
+    top: max(6px, env(safe-area-inset-top)); left: 54px; right: 54px;
+    margin: 0; padding: 4px 0;
+    font-size: clamp(1rem, 4.2vw, 1.3rem);
+    text-align: center;
     letter-spacing: 0.01em;
     text-wrap: balance;
-    color: var(--chrome-text);
+    color: var(--ink);
+    z-index: 3;
+    pointer-events: none;
   }
   h1 .heart { color: var(--coral); }
 
+  /* Appka na mobilu vyplňuje celou obrazovku (žádný ohraničený "rámeček" s
+     okraji) — víc místa pro obsah, hlavně teď s přibývajícími místnostmi.
+     Na širokém okně (tablet naležato, počítač) by 100vw natáhlo panenku i
+     tlačítka do groteskní šířky a nízké výšky — proto strop na šířku, appka
+     zůstává vycentrovaná jako "telefon" i tam. */
   .stage-wrap {
     position: relative;
-    width: min(94vw, 460px);
-    aspect-ratio: 3 / 4;
-    border-radius: 40px;
-    padding: 14px;
-    background: linear-gradient(160deg, var(--coral), var(--gold));
-    box-shadow: 0 22px 44px -16px rgba(74,51,80,0.45), 0 4px 10px -2px rgba(74,51,80,0.25);
-    overflow: hidden;
-  }
-  .stage-wrap::before {
-    content: ""; position: absolute; inset: -60%;
-    background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.55) 50%, transparent 60%);
-    animation: frame-shine 6s ease-in-out infinite;
-    pointer-events: none; z-index: 1;
-  }
-  @keyframes frame-shine {
-    0%, 30% { transform: translateX(-60%) rotate(8deg); }
-    60%, 100% { transform: translateX(60%) rotate(8deg); }
+    width: min(100vw, 480px);
+    height: 100dvh;
+    margin: 0 auto;
   }
 
   .stage {
     position: relative;
-    z-index: 2;
     width: 100%;
     height: 100%;
-    border-radius: 30px;
     overflow: hidden;
     background: var(--cream);
-    border: 6px solid var(--cream);
-    box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.55);
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   .scene {
@@ -306,9 +294,9 @@
   /* Sbírka odznáčků — na rozdíl od ostatních aktivit se NEresetuje při
      návratu domů, je to trvalá památka na to, co všechno se panence
      povedlo (jednou vybarveno, zůstává vybarveno). */
-  .badge-strip { display: flex; gap: 8px; }
+  .badge-strip { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; max-width: 220px; }
   .badge {
-    width: 32px; height: 32px; border-radius: 50%;
+    width: 28px; height: 28px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     background: rgba(255,255,255,0.4); font-size: 1.05rem;
     filter: grayscale(1) opacity(0.4);
@@ -327,6 +315,19 @@
   .room-grid {
     display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%;
   }
+  .room-btn.wide { grid-column: 1 / -1; }
+  /* Panenka má na domovské obrazovce svou pevnou horní zónu; zbytek (pozdrav,
+     mašlička, odznáčky, místnosti) je samostatný panel s vlastním posouváním,
+     takže přibývající tlačítka nikdy nezatlačí obsah nahoru přes panenku
+     ani mimo viditelnou plochu — prostě se to uvnitř panelu srolluje. */
+  .scene[data-scene="home"] .scene-content {
+    position: absolute;
+    top: 37%; left: 0; right: 0; bottom: 0;
+    overflow-y: auto;
+    scrollbar-width: none;
+    padding: 4px 10px 16px;
+  }
+  .scene[data-scene="home"] .scene-content::-webkit-scrollbar { display: none; }
   .room-btn {
     display: flex; flex-direction: row; align-items: center; gap: 10px;
     border: none; border-radius: 20px; padding: 10px 12px;
@@ -339,9 +340,12 @@
     animation: room-pop 0.5s cubic-bezier(.2,1.4,.4,1) forwards;
   }
   .room-btn:nth-child(1) { animation-delay: 0.05s; }
-  .room-btn:nth-child(2) { animation-delay: 0.13s; }
-  .room-btn:nth-child(3) { animation-delay: 0.21s; }
-  .room-btn:nth-child(4) { animation-delay: 0.29s; }
+  .room-btn:nth-child(2) { animation-delay: 0.11s; }
+  .room-btn:nth-child(3) { animation-delay: 0.17s; }
+  .room-btn:nth-child(4) { animation-delay: 0.23s; }
+  .room-btn:nth-child(5) { animation-delay: 0.29s; }
+  .room-btn:nth-child(6) { animation-delay: 0.35s; }
+  .room-btn:nth-child(7) { animation-delay: 0.41s; }
   @keyframes room-pop { to { opacity: 1; transform: translateY(0) scale(1); } }
   .room-btn:active { transform: scale(0.94); }
   .room-btn .badge {
@@ -364,6 +368,9 @@
   .room-btn.bath { background: linear-gradient(135deg, #d8f2ff, #b7e6ff); }
   .room-btn.night { background: linear-gradient(135deg, #cdb8ea, #a892d6); color: #fff; }
   .room-btn.night .sub { opacity: 0.85; }
+  .room-btn.breakfast { background: linear-gradient(135deg, #fff0c2, var(--gold)); }
+  .room-btn.lunch { background: linear-gradient(135deg, #d4f0b0, #9ecb6e); }
+  .room-btn.dinner { background: linear-gradient(135deg, #ffd0b0, var(--coral)); }
 
   /* ---- generic back button ---- */
   .back-btn {
@@ -523,6 +530,25 @@
     animation: rise 2.6s ease-in forwards;
   }
   @keyframes rise { 0% { transform: translateY(0) scale(0.6); opacity: 0.9;} 90% { opacity: 0.9;} 100% { transform: translateY(-70px) scale(1.1); opacity: 0;} }
+
+  /* ---- MEAL scene (snídaně/oběd/večeře) ---- */
+  .meal-bg { background: linear-gradient(180deg, #ffe9c9 0%, #fff3e0 100%); transition: background 0.4s ease; }
+  .meal-bg.midday { background: linear-gradient(180deg, #bfe8ff 0%, #eef8ff 100%); }
+  .meal-bg.evening { background: linear-gradient(180deg, #d8b8e8 0%, #ffd9c2 100%); }
+  .table {
+    position: absolute; bottom: 14%; left: 50%; transform: translateX(-50%);
+    width: 200px; height: 56px; border-radius: 16px;
+    background: linear-gradient(180deg, #c98f52, #a86f39);
+    box-shadow: var(--shadow);
+  }
+  .plate {
+    position: absolute; top: -24px; left: 50%; transform: translateX(-50%);
+    width: 84px; height: 84px; border-radius: 50%;
+    background: #fff; border: 4px solid #f0e4d4; box-shadow: var(--shadow);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .plate-food { font-size: 2.1rem; line-height: 1; opacity: 0; transform: scale(0.5); transition: opacity 0.3s ease, transform 0.3s ease cubic-bezier(.2,1.4,.4,1); }
+  .plate-food.on { opacity: 1; transform: scale(1); }
 
   /* ---- BEDTIME scene ---- */
   .bed-bg { background: linear-gradient(180deg, var(--night) 0%, var(--night-deep) 100%); }
