@@ -847,10 +847,15 @@
   }
 
   // Domovská obrazovka podle skutečné hodiny — stejná hranice 6-18/18-6 jako
-  // "Auto" motiv jinde. Stačí zjistit jednou při startu, appka se nenechává
-  // otevřenou přes půlnoc.
-  var homeHour = new Date().getHours();
-  document.querySelector(".home-sky").classList.toggle("night-time", homeHour >= 18 || homeHour < 6);
+  // "Auto" motiv jinde. Přepočítává se průběžně, aby se nebe samo překreslilo,
+  // i když appka zůstane otevřená přes hranici dne a noci.
+  var homeSky = document.querySelector(".home-sky");
+  function updateHomeSky() {
+    var hour = new Date().getHours();
+    homeSky.classList.toggle("night-time", hour >= 18 || hour < 6);
+  }
+  updateHomeSky();
+  setInterval(updateHomeSky, 60000);
 
   applyBowColor();
   applyHairColor();
