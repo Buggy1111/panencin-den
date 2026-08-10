@@ -306,7 +306,7 @@
   /* Sbírka odznáčků — na rozdíl od ostatních aktivit se NEresetuje při
      návratu domů, je to trvalá památka na to, co všechno se panence
      povedlo (jednou vybarveno, zůstává vybarveno). */
-  .badge-strip { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; max-width: 220px; }
+  .badge-strip { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; max-width: 270px; }
   .badge {
     width: 28px; height: 28px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
