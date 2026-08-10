@@ -38,6 +38,20 @@
           <button class="bow-swatch" data-bow="purple" style="--sw-a:#a978d6;--sw-b:#c39fe8" aria-label="Fialová"></button>
           <button class="bow-swatch" data-bow="gold" style="--sw-a:#f5b942;--sw-b:#f7cc73" aria-label="Zlatá"></button>
         </div>
+        <div class="picker-label">💇 Vlásky</div>
+        <div class="hair-picker" id="hairPicker" role="group" aria-label="Barva vlásků">
+          <button class="hair-swatch" data-hair="brown" style="--sw-a:#8a6249;--sw-b:#5f4130" aria-label="Hnědá"></button>
+          <button class="hair-swatch" data-hair="black" style="--sw-a:#4a3a4a;--sw-b:#241c28" aria-label="Černá"></button>
+          <button class="hair-swatch" data-hair="blonde" style="--sw-a:#f2d38a;--sw-b:#d9ac52" aria-label="Plavá"></button>
+          <button class="hair-swatch" data-hair="ginger" style="--sw-a:#e8823f;--sw-b:#c05a26" aria-label="Rezavá"></button>
+        </div>
+        <div class="picker-label">👓 Brýle</div>
+        <div class="glasses-picker" id="glassesPicker" role="group" aria-label="Barva brýlí">
+          <button class="glasses-swatch" data-glasses="ink" style="--sw-a:#6b5570;--sw-b:#4a3350" aria-label="Tmavá"></button>
+          <button class="glasses-swatch" data-glasses="red" style="--sw-a:#ff6f5e;--sw-b:#e8432e" aria-label="Červená"></button>
+          <button class="glasses-swatch" data-glasses="blue" style="--sw-a:#5b8def;--sw-b:#3a68c9" aria-label="Modrá"></button>
+          <button class="glasses-swatch" data-glasses="green" style="--sw-a:#7bc98f;--sw-b:#4fa868" aria-label="Zelená"></button>
+        </div>
         <div class="badge-strip" id="badgeStrip">
           <div class="badge" data-badge="outside" title="Oblečená přesně na počasí">🌤️</div>
           <div class="badge" data-badge="beach" title="Den na pláži zvládnutý">🏖️</div>
@@ -215,7 +229,7 @@
       <div class="bed">
         <div class="blanket" id="blanket"></div>
       </div>
-      <div class="doll-spot" id="dollSpotBed" style="bottom:22%;"></div>
+      <div class="doll-spot" id="dollSpotBed" style="bottom:32%;"></div>
       <div class="night-veil" id="nightVeil">
         <div class="goodnight-text" id="goodnightText">
           <div>Dobrou noc, sladké sny 💤</div>
@@ -249,8 +263,8 @@
         <stop offset="100%" stop-color="#f0b899"/>
       </radialGradient>
       <linearGradient id="hairGrad" x1="0%" y1="0%" x2="20%" y2="100%">
-        <stop offset="0%" stop-color="#8a6249"/>
-        <stop offset="100%" stop-color="#5f4130"/>
+        <stop offset="0%" stop-color="var(--hair-a, #8a6249)"/>
+        <stop offset="100%" stop-color="var(--hair-b, #5f4130)"/>
       </linearGradient>
     </defs>
     <!-- kontaktní stín pod nohama — součást panenky, ne scény, takže funguje
@@ -524,12 +538,14 @@
       <rect x="121" y="118" width="15" height="9" rx="4.5" fill="#ff6fa5"/>
     </g>
 
-    <!-- accessories -->
-    <g class="accessory acc-sunglasses" data-accessory="sunglasses">
-      <rect x="70" y="80" width="26" height="14" rx="6" fill="#4a3350"/>
-      <rect x="106" y="80" width="26" height="14" rx="6" fill="#4a3350"/>
-      <rect x="96" y="84" width="10" height="4" fill="#4a3350"/>
+    <!-- brýle — vždy vidět (stejně jako mašlička), jen barva se mění, žádné on/off -->
+    <g class="doll-glasses">
+      <rect x="70" y="80" width="26" height="14" rx="6" fill="var(--glasses-a, #4a3350)" fill-opacity="0.35" stroke="var(--glasses-a, #4a3350)" stroke-width="3"/>
+      <rect x="106" y="80" width="26" height="14" rx="6" fill="var(--glasses-a, #4a3350)" fill-opacity="0.35" stroke="var(--glasses-a, #4a3350)" stroke-width="3"/>
+      <rect x="96" y="85" width="10" height="3" fill="var(--glasses-a, #4a3350)"/>
     </g>
+
+    <!-- accessories -->
     <g class="accessory acc-hat" data-accessory="hat">
       <path d="M58 60 Q101 24 144 60 Q101 46 58 60 Z" fill="#5ca9c7"/>
       <circle cx="101" cy="26" r="8" fill="#eef8fb"/>

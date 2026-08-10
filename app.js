@@ -17,6 +17,8 @@
     alarmHour: 7,
     soundOn: true,
     bowColor: "pink",
+    hairColor: "brown",
+    glassesColor: "ink",
     currentMeal: null,
     mealTableSet: false,
     mealFood: null,
@@ -189,6 +191,55 @@
     });
   });
 
+  /* Barva vlásků — stejný princip jako mašlička (CSS proměnné na doll elementu). */
+  var hairPalette = {
+    brown: { a: "#8a6249", b: "#5f4130", label: "hnědá" },
+    black: { a: "#4a3a4a", b: "#241c28", label: "černá" },
+    blonde: { a: "#f2d38a", b: "#d9ac52", label: "plavá" },
+    ginger: { a: "#e8823f", b: "#c05a26", label: "rezavá" },
+  };
+  function applyHairColor() {
+    var p = hairPalette[state.hairColor] || hairPalette.brown;
+    doll.style.setProperty("--hair-a", p.a);
+    doll.style.setProperty("--hair-b", p.b);
+    document.querySelectorAll(".hair-swatch").forEach(function (b) {
+      b.classList.toggle("picked", b.dataset.hair === state.hairColor);
+    });
+  }
+  document.querySelectorAll(".hair-swatch").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      state.hairColor = btn.dataset.hair;
+      applyHairColor();
+      persist();
+      SFX.tap();
+      VOICE.say("Vlásky jsou teď " + (hairPalette[state.hairColor].label) + ".");
+    });
+  });
+
+  /* Barva brýlí (sluneční brýle na pláži) — stejný princip, jen jedna CSS proměnná. */
+  var glassesPalette = {
+    ink: { a: "#4a3350", label: "tmavá" },
+    red: { a: "#e8432e", label: "červená" },
+    blue: { a: "#3a68c9", label: "modrá" },
+    green: { a: "#4fa868", label: "zelená" },
+  };
+  function applyGlassesColor() {
+    var p = glassesPalette[state.glassesColor] || glassesPalette.ink;
+    doll.style.setProperty("--glasses-a", p.a);
+    document.querySelectorAll(".glasses-swatch").forEach(function (b) {
+      b.classList.toggle("picked", b.dataset.glasses === state.glassesColor);
+    });
+  }
+  document.querySelectorAll(".glasses-swatch").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      state.glassesColor = btn.dataset.glasses;
+      applyGlassesColor();
+      persist();
+      SFX.tap();
+      VOICE.say("Brýle jsou teď " + (glassesPalette[state.glassesColor].label) + ".");
+    });
+  });
+
   /* Odznáčky — trvalá sbírka nezávislá na `state` (ten se při návratu domů
      částečně resetuje kvůli znovuhratelnosti; odznáčky ne, jsou to trofeje). */
   var badges = { outside: false, beach: false, bath: false, breakfast: false, lunch: false, dinner: false, bedtime: false };
@@ -279,7 +330,6 @@
     if (name === "beach") {
       // U moře je vždy nejdřív v plavkách, dokud si nelehne na deku.
       setOutfit("swimsuit");
-      setAccessory("sunglasses", state.onTowel);
     } else if (name === "bath") {
       // Než se vykoupe, je pořád v plavkách; po utření/oblečení je v županku.
       setOutfit(state.inRobe ? "robe" : "swimsuit");
@@ -490,7 +540,6 @@
     towelMat.classList.toggle("active", state.onTowel);
     dollSpotBeach.classList.toggle("lying", state.onTowel);
     dollSpotBeach.style.bottom = state.onTowel ? "4.8%" : "26%";
-    if (state.scene === "beach") setAccessory("sunglasses", state.onTowel);
     towelBtn.textContent = state.onTowel ? "Zvednout z deky" : "Položit na deku";
     if (state.sunscreen >= 5 && !state.onTowel) {
       beachFeedback.textContent = "Krásně chráněná krémem! ☀️🧴";
@@ -724,7 +773,7 @@
     tuckBtn.disabled = !state.pajamas || state.inBed;
     blanket.classList.toggle("on", state.inBed);
     dollSpotBed.classList.toggle("lying", state.inBed);
-    dollSpotBed.style.bottom = state.inBed ? "-5.1%" : "22%";
+    dollSpotBed.style.bottom = state.inBed ? "4.9%" : "32%";
     clockCard.style.display = state.inBed ? "flex" : "none";
     goodnightBtn.disabled = !state.inBed;
     doll.classList.toggle("sleeping", state.scene === "bedtime" && state.inBed);
@@ -802,6 +851,8 @@
   document.querySelector(".home-sky").classList.toggle("night-time", homeHour >= 18 || homeHour < 6);
 
   applyBowColor();
+  applyHairColor();
+  applyGlassesColor();
   renderBadges();
   goScene(state.scene || "home");
 })();

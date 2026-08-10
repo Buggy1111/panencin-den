@@ -291,6 +291,18 @@
   .bow-swatch:active { transform: scale(0.88); }
   .bow-swatch.picked { border-color: var(--ink); transform: scale(1.12); }
 
+  .picker-label { font-size: 0.72rem; font-weight: 700; color: var(--chrome-sub); margin: 2px 0 -3px; }
+  .hair-picker, .glasses-picker { display: flex; gap: 8px; margin-bottom: 2px; }
+  .hair-swatch, .glasses-swatch {
+    width: 26px; height: 26px; border-radius: 50%; cursor: pointer;
+    border: 2.5px solid rgba(255,255,255,0.85);
+    background: linear-gradient(135deg, var(--sw-a), var(--sw-b));
+    box-shadow: var(--shadow);
+    transition: transform 0.15s ease;
+  }
+  .hair-swatch:active, .glasses-swatch:active { transform: scale(0.88); }
+  .hair-swatch.picked, .glasses-swatch.picked { border-color: var(--ink); transform: scale(1.12); }
+
   /* Sbírka odznáčků — na rozdíl od ostatních aktivit se NEresetuje při
      návratu domů, je to trvalá památka na to, co všechno se panence
      povedlo (jednou vybarveno, zůstává vybarveno). */
@@ -560,7 +572,7 @@
   .star { position: absolute; color: var(--moon); animation: twinkle 2.6s ease-in-out infinite; }
   @keyframes twinkle { 0%,100%{ opacity: 0.25; transform: scale(0.8);} 50%{ opacity: 1; transform: scale(1.15);} }
   .bed {
-    position: absolute; bottom: 4%; left: 50%; transform: translateX(-50%);
+    position: absolute; bottom: 14%; left: 50%; transform: translateX(-50%);
     width: 200px; height: 76px; border-radius: 16px 16px 10px 10px;
     background: linear-gradient(180deg, #6b5590, #55417a);
     box-shadow: var(--shadow);
