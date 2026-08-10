@@ -820,7 +820,7 @@
       z.className = "zzz go";
       z.textContent = "z";
       z.style.left = (46 + Math.random() * 10) + "%";
-      z.style.bottom = "36%";
+      z.style.bottom = "26%";
       document.querySelector('[data-scene="bedtime"]').appendChild(z);
       setTimeout(function () { z.remove(); }, 2400);
     }, 900);
@@ -831,7 +831,9 @@
     clearInterval(wakeBtn._timer);
     nightVeil.classList.remove("on");
     goodnightText.classList.remove("on");
-    doll.classList.remove("sleeping");
+    state.inBed = false;
+    renderBed();
+    persist();
     SFX.bell();
     VOICE.say("Dobré ráno! Vstáváme a hezky se protáhneme.");
   });
